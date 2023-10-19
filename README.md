@@ -3,7 +3,7 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 
 Прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201).
 
-Файл прошивки: [TS0201_v44.bin](https://github.com/pvvx/BLE_THSensor/raw/main/source/TS0201/TS0201_v44.bin)
+Файл прошивки: [TS0201_v44.bin](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/TS0201_v44.bin)
 
 Для настройки используйте [TelinkMiFlasher.html](https://pvvx.github.io/ATC_MiThermometer/TelinkMiFlasher.html) от версии 6.5.
 
