@@ -87,7 +87,7 @@ static const u8 my_ManCharVal[5] = {
 static const u8 my_FirmStr[] = {"github.com/pvvx"};
 
 #if USE_FLASH_SERIAL_UID
-RAM uint8_t my_SerialStr[21]; // "556202-C86013-AP21693"
+RAM uint8_t my_SerialStr[21]; // "556202-C86013-0123456"
 #endif
 
 #if DEVICE_TYPE == DEVICE_TS0201
@@ -290,30 +290,33 @@ RAM attribute_t my_Attributes[] = {
 		{0,ATT_PERMISSIONS_RDWR, 2,sizeof(RxTxValueInCCC),(u8*)(&clientCharacterCfgUUID), 	(u8*)(&RxTxValueInCCC), 0},	//value
 };
 
+static uint8_t * ser_uid_txt(uint8_t *d, uint8_t *s, int len) {
+	while(len) {
+		*d++ = hex_ascii[(*s >> 4) & 0xf];
+		*d++ = hex_ascii[(*s++ >> 0) & 0xf];
+		len--;
+	}
+	return d;
+}
+
 void my_att_init(void) {
 #if USE_FLASH_SERIAL_UID
-	// Read SoC ID, version
-	uint16_t soc_id = REG_ADDR16(0x7e);
-	uint8_t  soc_ver = REG_ADDR8(0x7d);
-	// Read flash UID
 	uint8_t buf[16];
-	my_SerialStr[0] = hex_ascii[(soc_id >> 12)];
-	my_SerialStr[1] = hex_ascii[(soc_id >> 8) & 0xf];
-	my_SerialStr[2] = hex_ascii[(soc_id >> 4) & 0xf];
-	my_SerialStr[3] = hex_ascii[(soc_id >> 0) & 0xf];
-	my_SerialStr[4] = hex_ascii[(soc_ver >> 4) & 0xf];
-	my_SerialStr[5] = hex_ascii[(soc_ver >> 0) & 0xf];
-	my_SerialStr[6] = '-';
+	uint8_t *p = my_SerialStr;
+	// Read SoC ID, version
+	buf[0] = REG_ADDR8(0x7f);
+	buf[1] = REG_ADDR8(0x7e);
+	buf[2] = REG_ADDR8(0x7d);
+	p = ser_uid_txt(p, buf, 3);
+	*p++ = '-';
+	// Read flash ID
 	flash_read_id(buf);
-	my_SerialStr[7] = hex_ascii[(buf[0] >> 4) & 0xf];
-	my_SerialStr[8] = hex_ascii[(buf[0] >> 0) & 0xf];
-	my_SerialStr[9] = hex_ascii[(buf[1] >> 4) & 0xf];
-	my_SerialStr[10] = hex_ascii[(buf[1] >> 0) & 0xf];
-	my_SerialStr[11] = hex_ascii[(buf[2] >> 4) & 0xf];
-	my_SerialStr[12] = hex_ascii[(buf[2] >> 0) & 0xf];
-	my_SerialStr[13] = '-';
+	p = ser_uid_txt(p, buf, 3);
+	*p++ = '-';
+	// Read flash UID
 	flash_read_uid(buf);
-	memcpy(&my_SerialStr[14], &buf[4],7);
+	memcpy(p, buf, 7);
+	//ser_uid_txt(p, &buf[4], 7);
 #endif
 #if BLE_SECURITY_ENABLE
 	if (pincode) {

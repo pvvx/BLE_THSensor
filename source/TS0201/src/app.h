@@ -62,7 +62,7 @@ typedef struct __attribute__((packed)) _cfg_t {
 	uint8_t measure_interval; // measure_interval = advertising_interval * x (2..25)
 	uint8_t rf_tx_power; // RF_POWER_N25p18dBm .. RF_POWER_P3p01dBm (130..191)
 	uint8_t connect_latency; // +1 x0.02 sec ( = connection interval), Tmin = 1*20 = 20 ms, Tmax = 256 * 20 = 5120 ms
-	uint8_t rezerved;	// min_step_time_update_lcd
+	uint8_t ext_hw_id;	// min_step_time_update_lcd, new -> if (hwver == 15) use ext_hw_ver
 	struct __attribute__((packed)) {
 		uint8_t hwver		: 4; // 0
 		uint8_t reserved	: 4; // reserved

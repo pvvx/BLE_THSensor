@@ -64,6 +64,7 @@ const cfg_t def_cfg = {
 		.measure_interval = 4, // * advertising_interval = 10 sec
 		.flg.temp_F_or_C = false,
 		.hw_cfg.hwver = 0xf,
+		.ext_hw_id = 0x81,
 #if USE_FLASH_MEMO
 		.averaging_measurements = 180, // * measure_interval = 10 * 180 = 1800 sec = 30 minutes
 #endif
