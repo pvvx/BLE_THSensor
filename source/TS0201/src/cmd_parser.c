@@ -100,8 +100,9 @@ void cmd_parser(void * p) {
 					ble_connected |= BIT(CONNECTED_FLG_RESET_OF_DISCONNECT); // reset device on disconnect
 				}
 			}
-			_flash_read(FLASH_MIMAC_ADDR, 8, &send_buf[1]); // MAC[6] + mac_random[2]
-			olen = 8 + 1;
+			send_buf[1] = 8;
+			_flash_read(FLASH_MIMAC_ADDR, 8, &send_buf[2]); // MAC[6] + mac_random[2]
+			olen = 8 + 2;
 #if USE_SECURITY_BEACON
 		} else if (cmd == CMD_ID_BKEY) { // Get/set beacon bindkey
 			if (len == sizeof(bindkey) + 1) {

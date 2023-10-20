@@ -290,6 +290,7 @@ RAM attribute_t my_Attributes[] = {
 		{0,ATT_PERMISSIONS_RDWR, 2,sizeof(RxTxValueInCCC),(u8*)(&clientCharacterCfgUUID), 	(u8*)(&RxTxValueInCCC), 0},	//value
 };
 
+#if USE_FLASH_SERIAL_UID
 static uint8_t * ser_uid_txt(uint8_t *d, uint8_t *s, int len) {
 	while(len) {
 		*d++ = hex_ascii[(*s >> 4) & 0xf];
@@ -298,6 +299,7 @@ static uint8_t * ser_uid_txt(uint8_t *d, uint8_t *s, int len) {
 	}
 	return d;
 }
+#endif
 
 void my_att_init(void) {
 #if USE_FLASH_SERIAL_UID
