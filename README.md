@@ -1,6 +1,8 @@
 # BLE_THSensor
 BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0201)
 
+<img src="https://pvvx.github.io/TS0201/img/ts0201.jpg" width="120"/>
+
 Прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201).
 
 Файл прошивки: [TS0201_v44.bin](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/TS0201_v44.bin)
@@ -12,3 +14,7 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 Кнопка включает BLE рекламу в режим Legacy (BT4.2) на 80 секунд с Advertising interval в 1 сек для соединения. 
 Используется если включен режим BLE LongRange или установлен большой Advertising interval.
 
+
+Работа в морозилке холодильника:
+
+<img src="https://github.com/pvvx/raw/master/img/ha_fridge.jpg"/>
