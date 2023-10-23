@@ -5,7 +5,7 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 
 Прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201).
 
-![pgm](https://pvvx.github.io/TS0201/img/ts0201pgm.png)
+![pgm](https://pvvx.github.io/BLE_THSensor/blob/master/ts0201pgm.png)
 
 [WebUSBCOMflasher](https://pvvx.github.io/ATC_MiThermometer/USBCOMFlashTx.html)
 
