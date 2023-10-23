@@ -5,11 +5,15 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 
 Прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201).
 
+Самый простой программатор-эмулятор Telink-Swire без обатной связи: [WebUSBCOMflasher](https://pvvx.github.io/ATC_MiThermometer/USBCOMFlashTx.html)
+
 ![pgm](https://raw.githubusercontent.com/pvvx/BLE_THSensor/master/img/ts0201pgm.png)
 
-[WebUSBCOMflasher](https://pvvx.github.io/ATC_MiThermometer/USBCOMFlashTx.html)
-
 Файл прошивки: [TS0201_v44.bin](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/TS0201_v44.bin)
+
+Более сложный программатор-эмулятор Telink-Swire с переходом на UART связь: [TlsrComProg825x](https://github.com/pvvx/TlsrComProg825x)
+
+Полнофункциональный аппаратный Telink-Swire программатор: [TLSRPGM](https://github.com/pvvx/TLSRPGM) 
 
 Для настройки используйте [TelinkMiFlasher.html](https://pvvx.github.io/ATC_MiThermometer/TelinkMiFlasher.html) от версии 6.5.
 
