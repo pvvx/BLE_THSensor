@@ -18,3 +18,7 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 Работа в морозилке холодильника:
 
 <img src="https://github.com/pvvx/BLE_THSensor/blob/master/img/ha_fridge.jpg"/>
+
+Среднее потребление менее 20 мкА - зависит от настроек.
+
+(Потребление оригинального TS0201 в ZigBee - более 0.1 мА при связи со шлюзом, без подстроек интервалов)
