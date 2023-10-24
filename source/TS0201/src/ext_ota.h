@@ -42,6 +42,7 @@ extern ext_ota_t ext_ota;
 
 uint8_t check_ext_ota(uint32_t ota_addr, uint32_t ota_size);
 void clear_ota_area(void);
+void test_first_ota(void);
 
 #endif // USE_EXT_OTA
 

@@ -27,11 +27,11 @@ extern "C" {
 #define EEP_ID_VER (0x5555) // EEP ID blk: unsigned int = minimum supported version
 //-----------------------------------------------------------------------------
 #define FLASH_BASE_ADDR			0x00000000
-#define FLASH_SIZE				(512*1024)
+#define FLASH_SCFG_END			(512*1024)
 #define FLASH_SECTOR_SIZE		4096
 #define FMEMORY_SCFG_BANK_SIZE	FLASH_SECTOR_SIZE // размер сектора, 4096 bytes
 #define FMEMORY_SCFG_BANKS 		4 // кол-во секторов для работы 2..
-#define FMEMORY_SCFG_BASE_ADDR	(FLASH_SIZE - (FMEMORY_SCFG_BANKS*FMEMORY_SCFG_BANK_SIZE)) // 0x7C000
+#define FMEMORY_SCFG_BASE_ADDR	(FLASH_SCFG_END - (FMEMORY_SCFG_BANKS*FMEMORY_SCFG_BANK_SIZE)) // 0x7C000
 //-----------------------------------------------------------------------------
 enum eFMEMORY_ERRORS {
 	FMEM_NOT_FOUND = -1,	//  -1 - не найден

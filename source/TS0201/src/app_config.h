@@ -4,22 +4,14 @@
 extern "C" {
 #endif
 
-#define VERSION 0x44	 // BCD format (0x34 -> '3.4')
+#define VERSION 0x45	 // BCD format (0x34 -> '3.4')
 #define EEP_SUP_VER 0x09 // EEP data minimum supported version
 
-#define DEVICE_TS0201   	0x055B	// ZigBee TS0201, analog: IH-K009
-/*
-#define DEVICE_LYWSD03MMC   0x055B	// LCD display LYWSD03MMC
-#define DEVICE_MHO_C122   	0x000B	// LCD display MHO_C122
-#define DEVICE_MHO_C401   	0x0387	// E-Ink display MHO-C401 2020
-#define DEVICE_MHO_C401N   	0x0008	// E-Ink display MHO-C401 2022
-#define DEVICE_CGG1 		0x0B48  // E-Ink display CGG1-M "Qingping Temp & RH Monitor"
-#define DEVICE_CGDK2 		0x066F  // LCD display "Qingping Temp & RH Monitor Lite"
-#define DEVICE_MJWSD05MMC	0x2832  // LCD display MJWSD05MMC
-*/
+#define DEVICE_TS0201   	1	// ZigBee TS0201, analog: IH-K009
+#define DEVICE_TNK01   		2	// DIY, PB-03F module
 
 //#ifndef DEVICE_TYPE
-#define DEVICE_TYPE			DEVICE_TS0201
+#define DEVICE_TYPE			DEVICE_TS0201 // Use TS0201 only
 //#endif
 
 #define BLE_SECURITY_ENABLE 1 // = 1 support pin-code
@@ -30,23 +22,25 @@ extern "C" {
 #define USE_FLASH_MEMO		1 // = 1 flash logger enable
 
 #define USE_SECURITY_BEACON 1 // = 1 support encryption beacon (bindkey)
-#define USE_HA_BLE_BEACON	1 // = 1 https://github.com/custom-components/ble_monitor/issues/548
+#define USE_HA_BLE_BEACON	1 // = 1 BTHome v1 https://bthome.io/
 #define USE_MIHOME_BEACON	1 // = 1 Compatible with MiHome beacon
-#define USE_BTHOME_BEACON	1
+#define USE_BTHOME_BEACON	1 // = 1 BTHome v2 https://bthome.io/
 
 #define USE_KEYS_WAKEAP		1 // = 1 опрос кнопки с прерыванием
 
 #define USE_OUT_AVERAGE_BATTERY	0 // = 1 Transmit averaged values
 
-#define USE_EXT_OTA			0 // = 1 Compatible BigOTA
+#define USE_EXT_OTA			1 // = 1 Compatible BigOTA
 
 #define USE_DEVICE_INFO_CHR_UUID 	1 // = 1 enable Device Information Characteristics
-
-#define USE_FLASH_SERIAL_UID 1
+#define USE_FLASH_SERIAL_UID		1 // =1 Set my_SerialStr "$SOC_ID_Rev-$FLASH_JEDEC-$FLASH_UID"
 
 #define UART_PRINT_DEBUG_ENABLE		0 // =1 use u_printf() (PA7/SWS), source: SDK/components/application/print/u_printf.c
 
 #if DEVICE_TYPE == DEVICE_TS0201
+
+#define FLASH_SIZE_1M	1
+
 // GPIO_PB1 - TX
 // GPIO_PB4 - LED
 // GPIO_PB7 - RX
@@ -113,13 +107,16 @@ enum{
 /* Flash map:
   0x00000 Firmware bin or OTA1 bin storage Area (OTA1_FADDR)
   0x20000 Firmware bin or OTA2 bin storage Area (OTA2_FADDR)
-  0x40000 User Data Area (Logger, saving measurements) (FLASH_ADDR_START_MEMO)
+  0x40000 User Data Area, if (Logger, saving measurements) (FLASH_ADDR_START_MEMO)
   0x74000 Pair & Security info (CFG_ADR_BIND)
   0x76000 MAC address (CFG_ADR_MAC)
   0x77000 Customize freq_offset adjust cap value (CUST_CAP_INFO_ADDR)
   0x78000 free: Used Master BLE (CFG_ADR_PEER)
   0x7С000 EEP Data Area (FMEMORY_SCFG_BASE_ADDR)
-  0x80000 End Flash (FLASH_SIZE)
+  0x80000 End Flash 512KB (FLASH_SIZE)
+  if (Flash 1MB)
+  	  0x80000 Logger, saving measurements (FLASH_ADDR_START_MEMO)
+  	  0x100000 End Flash 1MB (FLASH_SIZE)
  */
 #define OTA1_FADDR 0x00000
 #define OTA2_FADDR 0x20000

@@ -62,9 +62,9 @@ typedef struct __attribute__((packed)) _cfg_t {
 	uint8_t measure_interval; // measure_interval = advertising_interval * x (2..25)
 	uint8_t rf_tx_power; // RF_POWER_N25p18dBm .. RF_POWER_P3p01dBm (130..191)
 	uint8_t connect_latency; // +1 x0.02 sec ( = connection interval), Tmin = 1*20 = 20 ms, Tmax = 256 * 20 = 5120 ms
-	uint8_t ext_hw_id;	// min_step_time_update_lcd, new -> if (hwver == 15) use ext_hw_ver
+	uint8_t ext_hw_id;	// old: min_step_time_update_lcd, new -> if (hwver == 15) use ext_hw_ver
 	struct __attribute__((packed)) {
-		uint8_t hwver		: 4; // 0
+		uint8_t hwver		: 4; // 0..14, =15 - use ext_hw_ver
 		uint8_t reserved	: 4; // reserved
 	} hw_cfg; // read only
 	uint8_t averaging_measurements; // * measure_interval, 0 - off, 1..255 * measure_interval
@@ -134,6 +134,7 @@ void set_default_cfg(void);
 void ev_adv_timeout(u8 e, u8 *p, int n); // DURATION_TIMEOUT Event Callback
 void test_config(void); // Test config values
 
+uint8_t * str_bin2hex(uint8_t *d, uint8_t *s, int len);
 
 //---- blt_common.c
 void blc_newMacAddress(int flash_addr, u8 *mac_pub, u8 *mac_rand);

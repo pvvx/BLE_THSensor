@@ -9,7 +9,9 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 
 [WebUSBCOMflasher](https://pvvx.github.io/ATC_MiThermometer/USBCOMFlashTx.html)
 
-Файл прошивки: [TS0201_v44.bin](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/TS0201_v44.bin)
+Файл прошивки: [TS0201_v45.bin](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/TS0201_v45.bin)
+
+Объем памяти замеров увеличен до 51943 шт. [GraphMemo.html](https://pvvx.github.io/ATC_MiThermometer/GraphMemo.html)
 
 Для настройки используйте [TelinkMiFlasher.html](https://pvvx.github.io/ATC_MiThermometer/TelinkMiFlasher.html) от версии 6.5.
 

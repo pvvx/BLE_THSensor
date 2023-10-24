@@ -23,6 +23,10 @@
 #if USE_BTHOME_BEACON
 #include "bthome_beacon.h"
 #endif
+#if	USE_EXT_OTA
+#include "ext_ota.h"
+#endif
+
 
 void app_enter_ota_mode(void);
 
@@ -64,7 +68,7 @@ const cfg_t def_cfg = {
 		.measure_interval = 4, // * advertising_interval = 10 sec
 		.flg.temp_F_or_C = false,
 		.hw_cfg.hwver = 0xf,
-		.ext_hw_id = 0x81,
+		.ext_hw_id = (USE_EXT_OTA << 7) | DEVICE_TYPE,
 #if USE_FLASH_MEMO
 		.averaging_measurements = 180, // * measure_interval = 10 * 180 = 1800 sec = 30 minutes
 #endif
@@ -242,7 +246,6 @@ void bindkey_init(void) {
 #if USE_BTHOME_BEACON
 	bthome_beacon_init();
 #endif
-
 }
 #endif // USE_SECURITY_BEACON
 
@@ -298,8 +301,8 @@ void user_init_normal(void) {//this will get executed one time after power up
 		cfg.flg2.longrange = 0;
 		flash_write_cfg(&cfg, EEP_ID_CFG, sizeof(cfg));
 		analog_write(DEEP_ANA_REG0, 0x55);
-#endif // BLE_EXT_ADV
 	}
+#endif // BLE_EXT_ADV
 	init_ble();
 	bls_app_registerEventCallback(BLT_EV_FLAG_SUSPEND_EXIT, &suspend_exit_cb);
 #if USE_KEYS_WAKEAP

@@ -433,7 +433,7 @@ bool flash_supported_eep_ver(unsigned int min_ver, unsigned int new_ver) {
 		_flash_erase_sector(faddr);
 		_flash_write_dword(faddr, --tmp);
 		faddr += FLASH_SECTOR_SIZE;
-	} while (faddr < FLASH_SIZE);
+	} while (faddr < FLASH_SCFG_END);
 	_flash_clear_cache();
 	tmp = new_ver;
 	flash_write_cfg(&tmp, EEP_ID_VER, sizeof(tmp));

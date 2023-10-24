@@ -163,4 +163,4 @@ void bthome_event_beacon(void) {
 }
 
 */
-#endif // USE_HA_BLE_BEACON
+#endif // USE_BTHOME_BEACON

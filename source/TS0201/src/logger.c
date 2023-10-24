@@ -14,10 +14,6 @@
 #include "logger.h"
 #include "ble.h"
 
-#define MEMO_SEC_COUNT		((FLASH_ADDR_END_MEMO - FLASH_ADDR_START_MEMO) / FLASH_SECTOR_SIZE) // 49 sectors
-#define MEMO_SEC_RECS		((FLASH_SECTOR_SIZE-sizeof(memo_head_t))/sizeof(memo_blk_t)) // -  sector: 409 records
-//#define MEMO_REC_COUNT		(MEMO_SEC_RECS*(MEMO_SEC_COUNT-1))// max 48*409 = 20041 records
-
 #define _flash_erase_sector(a) flash_erase_sector(FLASH_BASE_ADDR + a)
 #define _flash_write_dword(a,d) { unsigned int _dw = d; flash_write(FLASH_BASE_ADDR + a, 4, (unsigned char *)&_dw); }
 #define _flash_write(a,b,c) flash_write(FLASH_BASE_ADDR + a, b, (unsigned char *)c)

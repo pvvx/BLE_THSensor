@@ -12,8 +12,13 @@
 #if USE_FLASH_MEMO
 
 #define MEMO_SEC_ID		0x55AAC0DE // sector head
+#if FLASH_SIZE_1M
+#define FLASH_ADDR_START_MEMO	0x80000
+#define FLASH_ADDR_END_MEMO		0x100000 // 128 sectors
+#else
 #define FLASH_ADDR_START_MEMO	0x40000
-#define FLASH_ADDR_END_MEMO		0x74000 // 49 sectors
+#define FLASH_ADDR_END_MEMO		0x74000 // 52 sectors
+#endif
 
 typedef struct _memo_blk_t {
 	uint32_t time;  // time (UTC)
@@ -37,6 +42,10 @@ typedef struct _memo_head_t {
 	uint32_t id;  // = 0x55AAC0DE (MEMO_SEC_ID)
 	uint16_t flg;  // = 0xffff - new sector, = 0 close sector
 }memo_head_t;
+
+#define MEMO_SEC_COUNT		((FLASH_ADDR_END_MEMO - FLASH_ADDR_START_MEMO) / FLASH_SECTOR_SIZE) // 52 or 128 sectors
+#define MEMO_SEC_RECS		((FLASH_SECTOR_SIZE-sizeof(memo_head_t))/sizeof(memo_blk_t)) // 1 sector = 409 records
+#define MEMO_REC_COUNT		(MEMO_SEC_RECS*(MEMO_SEC_COUNT-1))// max 51*409 = 20859 records or 127*409 = 51943 records
 
 extern memo_rd_t rd_memo;
 extern memo_inf_t memo;
