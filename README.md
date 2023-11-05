@@ -29,7 +29,7 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 Используется если включен режим BLE LongRange или установлен большой Advertising interval.
 
 
-Работа в морозилке холодильника:
+Работа в морозилке холодильника (BTHome v2, BLE LongRange для стабильной дальней связи через железные стенки холодильника):
 
 <img src="https://github.com/pvvx/BLE_THSensor/blob/master/img/ha_fridge.jpg"/>
 
