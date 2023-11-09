@@ -1,11 +1,9 @@
 # BLE_THSensor
-BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0201)
+BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0201_TZ3000) ([Model "TS0601 TZE200.."](https://pvvx.github.io/TS0601_TZE200) is not supported!)
 
-Wraning: Model "_TZE200_.." is not supported!
+<img src="https://pvvx.github.io/TS0201_TZ3000/img/ts0201_.jpg" width="120"/>
 
-<img src="https://pvvx.github.io/TS0201/img/ts0201.jpg" width="120"/>
-
-Прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201).
+Прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201_TZ3000).
 
 Самый простой программатор-эмулятор Telink-Swire без обратной связи: [WebUSBCOMflasher](https://pvvx.github.io/ATC_MiThermometer/USBCOMFlashTx.html)
 
