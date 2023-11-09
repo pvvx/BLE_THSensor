@@ -1,6 +1,8 @@
 # BLE_THSensor
 BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0201)
 
+Wraning: Model "_TZE200_.." is not supported!
+
 <img src="https://pvvx.github.io/TS0201/img/ts0201.jpg" width="120"/>
 
 Прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201).
