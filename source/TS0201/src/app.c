@@ -134,6 +134,8 @@ void test_config(void) {
 		my_periConnParameters.latency = cfg.connect_latency;
 	}
 	my_periConnParameters.timeout = connection_timeout;
+	cfg.hw_cfg.hwver = 0x0f;
+	cfg.ext_hw_id = DEVICE_TYPE;
 	my_RxTx_Data[0] = CMD_ID_CFG;
 	my_RxTx_Data[1] = VERSION;
 	memcpy(&my_RxTx_Data[2], &cfg, sizeof(cfg));
@@ -267,8 +269,8 @@ void user_init_normal(void) {//this will get executed one time after power up
 	start_tst_battery();
 	flash_unlock();
 	random_generator_init(); //must
-#if	USE_EXT_OTA
-	test_first_ota(); // Correct FW OTA address? Reformat Big OTA to Low OTA
+#if	1 // USE_EXT_OTA
+	big_to_low_ota(); // Correct FW OTA address? Reformat Big OTA to Low OTA
 #endif
 	// Read config
 	if(flash_read_cfg(&old_ver, EEP_ID_VER, sizeof(old_ver)) != sizeof(old_ver))

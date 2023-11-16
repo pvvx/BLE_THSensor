@@ -7,6 +7,7 @@ extern "C" {
 #define VERSION 0x45	 // BCD format (0x34 -> '3.4')
 #define EEP_SUP_VER 0x09 // EEP data minimum supported version
 
+// EXT_DEV_ID:
 #define DEVICE_TS0201   	1	// ZigBee TS0201, analog: IH-K009
 #define DEVICE_TNK01   		2	// DIY, PB-03F module
 

@@ -36,7 +36,16 @@ void cmd_parser(void * p) {
 		send_buf[0] = cmd;
 		send_buf[1] = 0; // no err?
 		uint32_t olen = 0;
-		if (cmd == CMD_ID_MEASURE) { // Start/stop notify measures in connection mode
+		if (cmd == CMD_ID_DEV_ID) { // Get DEV_ID
+			pdev_id_t p = (pdev_id_t) send_buf;
+			// p->pid = CMD_ID_DEV_ID;
+			// p->revision = 0;
+			p->hw_version = DEVICE_TYPE + 0x100;
+			p->sw_version = VERSION;
+			p->dev_spec_data = 0;
+			p->services = 0;
+			olen = sizeof(dev_id_t);
+		} else if (cmd == CMD_ID_MEASURE) { // Start/stop notify measures in connection mode
 			if(len >= 2)
 				tx_measures = req->dat[1];
 			else {
@@ -44,7 +53,7 @@ void cmd_parser(void * p) {
 				tx_measures = 1;
 			}
 			olen = 2;
-		} else if (cmd == CMD_ID_CFG || cmd == CMD_ID_CFG_NS) { // Get/set config
+		} else if (cmd == CMD_ID_CFG) { // Get/set config
 			u8 tmp = ((volatile u8 *)&cfg.flg2)[0];
 			if (--len > sizeof(cfg)) len = sizeof(cfg);
 			if (len) {
@@ -52,12 +61,10 @@ void cmd_parser(void * p) {
 			}
 			test_config();
 			ev_adv_timeout(0, 0, 0);
-			if (cmd != CMD_ID_CFG_NS) {	// Get/set config (not save to Flash)
-				if(tmp & MASK_FLG2_REBOOT) { // (cfg.flg2.bt5phy || cfg.flg2.ext_adv)
-					ble_connected |= BIT(CONNECTED_FLG_RESET_OF_DISCONNECT); // reset device on disconnect
-				}
-				flash_write_cfg(&cfg, EEP_ID_CFG, sizeof(cfg));
+			if(tmp & MASK_FLG2_REBOOT) { // (cfg.flg2.bt5phy || cfg.flg2.ext_adv)
+				ble_connected |= BIT(CONNECTED_FLG_RESET_OF_DISCONNECT); // reset device on disconnect
 			}
+			flash_write_cfg(&cfg, EEP_ID_CFG, sizeof(cfg));
 			ble_send_cfg();
 		} else if (cmd == CMD_ID_CFG_DEF) { // Set default config
 			u8 tmp = ((volatile u8 *)&cfg.flg2)[0];

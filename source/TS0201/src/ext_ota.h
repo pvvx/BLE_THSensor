@@ -11,7 +11,7 @@
 #include "app_config.h"
 
 #if (DEVICE_TYPE == DEVICE_MJWSD05MMC)
-void test_first_ota(void);
+void big_to_low_ota(void);
 #endif
 
 #if defined(MI_HW_VER_FADDR) && (MI_HW_VER_FADDR)
@@ -42,7 +42,7 @@ extern ext_ota_t ext_ota;
 
 uint8_t check_ext_ota(uint32_t ota_addr, uint32_t ota_size);
 void clear_ota_area(void);
-void test_first_ota(void);
+void big_to_low_ota(void);
 
 #endif // USE_EXT_OTA
 
