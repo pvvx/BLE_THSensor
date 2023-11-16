@@ -3,6 +3,8 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 
 <img src="https://pvvx.github.io/TS0201_TZ3000/img/ts0201_.jpg" width="120"/>
 
+* Zigbee firmware for [TS0201_TZ3000](https://github.com/pvvx/ZigbeeTLc)
+
 Прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201_TZ3000).
 
 Самый простой программатор-эмулятор Telink-Swire без обратной связи: [WebUSBCOMflasher](https://pvvx.github.io/ATC_MiThermometer/USBCOMFlashTx.html)
