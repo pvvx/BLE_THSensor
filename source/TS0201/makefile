@@ -8,6 +8,7 @@ PROJECT_NAME ?= THSensor
 
 PROJECT_PATH := ./src
 OUT_PATH :=./out
+ZBO_PATH :=.
 
 PGM_PORT?=COM4
 
@@ -16,6 +17,7 @@ $(error "Please check SDK Path and set TEL_PATH.")
 endif
 
 TL_Check = $(PROJECT_PATH)/../utils/tl_check_fw.py
+zb_OTA = $(PROJECT_PATH)/../utils/zigbee_ota.py
 
 COMPILEOS = $(shell uname -o)
 LINUX_OS = GNU/Linux
@@ -133,8 +135,11 @@ $(BIN_FILE): $(ELF_FILE)
 	@echo 'Create Flash image (binary format)'
 	@$(TC32_PATH)tc32-elf-objcopy -v -O binary $(ELF_FILE)  $(BIN_FILE)
 	@python3 $(TL_Check) $(BIN_FILE)
-	@echo 'Finished building: $@'
 	@echo ' '
+	@echo 'Create Zigbee OTA image'
+	@mkdir -p $(ZBO_PATH)
+	@python3 $(zb_OTA) $(BIN_FILE) -p $(ZBO_PATH)
+	@echo 'Finished building: $@'
 
 sizedummy: $(ELF_FILE)
 	@python3 $(PROJECT_PATH)/TlsrMemInfo.py -t $(TC32_PATH)tc32-elf-nm $(ELF_FILE)
