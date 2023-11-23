@@ -7,9 +7,24 @@ extern "C" {
 #define VERSION 0x45	 // BCD format (0x34 -> '3.4')
 #define EEP_SUP_VER 0x09 // EEP data minimum supported version
 
-// EXT_DEV_ID:
-#define DEVICE_TS0201   	1	// ZigBee TS0201, analog: IH-K009
-#define DEVICE_TNK01   		2	// DIY, PB-03F module
+// DevID:
+#ifndef DEVICE_CGG1_ver
+#define DEVICE_CGG1_ver		 0 // =2022 - CGG1-M version 2022, or = 0 - CGG1-M version 2020,2021
+#endif
+#define DEVICE_MHO_C401   	 1	// E-Ink display MHO-C401 2020
+#if DEVICE_CGG1_ver == 0     
+#define DEVICE_CGG1 		 2  // E-Ink display Old CGG1-M "Qingping Temp & RH Monitor"
+#else
+#define DEVICE_CGG1 		 7  // E-Ink display New CGG1-M "Qingping Temp & RH Monitor"
+#endif
+#define DEVICE_CGDK2 		 6  // LCD display "Qingping Temp & RH Monitor Lite"
+#define DEVICE_MHO_C401N   	 8	// E-Ink display MHO-C401 2022
+#define DEVICE_MJWSD05MMC	 9  // LCD display MJWSD05MMC
+#define DEVICE_LYWSD03MMC   10	// LCD display LYWSD03MMC
+#define DEVICE_MHO_C122   	11	// LCD display MHO_C122
+// Ext.devID:
+#define DEVICE_TNK01   		16	// DIY, PB-03F module
+#define DEVICE_TS0201   	17	// ZigBee TS0201, analog: IH-K009
 
 //#ifndef DEVICE_TYPE
 #define DEVICE_TYPE			DEVICE_TS0201 // Use TS0201 only

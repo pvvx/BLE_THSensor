@@ -8,7 +8,7 @@ PROJECT_NAME ?= THSensor
 
 PROJECT_PATH := ./src
 OUT_PATH :=./out
-ZBO_PATH :=.
+BIN_PATH :=./bin
 
 PGM_PORT?=COM4
 
@@ -16,6 +16,7 @@ ifneq ($(TEL_PATH)/components/drivers/8258/gpio_8258.c, $(wildcard $(TEL_PATH)/c
 $(error "Please check SDK Path and set TEL_PATH.")
 endif
 
+PYTHON ?= python3
 TL_Check = $(PROJECT_PATH)/../utils/tl_check_fw.py
 zb_OTA = $(PROJECT_PATH)/../utils/zigbee_ota.py
 
@@ -85,7 +86,7 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 LST_FILE := $(OUT_PATH)/$(PROJECT_NAME).lst
-BIN_FILE := $(OUT_PATH)/../$(PROJECT_NAME).bin
+BIN_FILE := $(BIN_PATH)/$(PROJECT_NAME).bin
 ELF_FILE := $(OUT_PATH)/$(PROJECT_NAME).elf
 
 SIZEDUMMY := sizedummy
@@ -97,21 +98,21 @@ build: pre-build main-build
 
 
 flash: $(BIN_FILE)
-	@python3 $(PROJECT_PATH)/../TlsrPgm.py -p$(PGM_PORT) -t50 -a2750 -m -w we 0 $(BIN_FILE)
+	@$(PYTHON) $(PROJECT_PATH)/../TlsrPgm.py -p$(PGM_PORT) -t50 -a2750 -m -w we 0 $(BIN_FILE)
 
 reset:
-	@python3 $(PROJECT_PATH)/../TlsrPgm.py -p$(PGM_PORT) -t50 -a2750 -m -w i
+	@$(PYTHON) $(PROJECT_PATH)/../TlsrPgm.py -p$(PGM_PORT) -t50 -a2750 -m -w i
 
 stop:
-	@python3 $(PROJECT_PATH)/../TlsrPgm.py -p$(PGM_PORT) -t50 -a2750 i
+	@$(PYTHON) $(PROJECT_PATH)/../TlsrPgm.py -p$(PGM_PORT) -t50 -a2750 i
 
 go:
-	@python3 $(PROJECT_PATH)/../TlsrPgm.py -p$(PGM_PORT) -w -m
+	@$(PYTHON) $(PROJECT_PATH)/../TlsrPgm.py -p$(PGM_PORT) -w -m
 
 TADDR?=0x844000
 TLEN?=128
 test_damp:
-	@python3 $(PROJECT_PATH)/../TlsrPgm.py -p$(PGM_PORT) -z10 -c -g ds $(TADDR) $(TLEN)
+	@$(PYTHON) $(PROJECT_PATH)/../TlsrPgm.py -p$(PGM_PORT) -z10 -c -g ds $(TADDR) $(TLEN)
 
 # Main-build Target
 main-build: $(ELF_FILE) secondary-outputs
@@ -121,7 +122,7 @@ $(ELF_FILE): $(OBJS) $(USER_OBJS)
 	@echo 'Building Standard target: $@'
 	@$(TC32_PATH)tc32-elf-ld --gc-sections -L $(TEL_PATH)/components/proj_lib -L $(OUT_PATH) -T $(LS_FLAGS) -o $(ELF_FILE) $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Building Reduced target: $@'
-	@$(TC32_PATH)tc32-elf-ld --gc-sections -Ttext `python3 $(PROJECT_PATH)/TlsrRetMemAddr.py -e $(ELF_FILE) -t $(TC32_PATH)tc32-elf-nm` -L $(TEL_PATH)/components/proj_lib -L $(OUT_PATH) -T $(LS_FLAGS) -o $(ELF_FILE) $(OBJS) $(USER_OBJS) $(LIBS)
+	@$(TC32_PATH)tc32-elf-ld --gc-sections -Ttext `$(PYTHON) $(PROJECT_PATH)/TlsrRetMemAddr.py -e $(ELF_FILE) -t $(TC32_PATH)tc32-elf-nm` -L $(TEL_PATH)/components/proj_lib -L $(OUT_PATH) -T $(LS_FLAGS) -o $(ELF_FILE) $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -133,16 +134,17 @@ $(LST_FILE): $(ELF_FILE)
 
 $(BIN_FILE): $(ELF_FILE)
 	@echo 'Create Flash image (binary format)'
+	@mkdir -p $(BIN_PATH)
 	@$(TC32_PATH)tc32-elf-objcopy -v -O binary $(ELF_FILE)  $(BIN_FILE)
-	@python3 $(TL_Check) $(BIN_FILE)
+	@$(PYTHON) $(TL_Check) $(BIN_FILE)
+	@echo 'Finished building: $@'
 	@echo ' '
 	@echo 'Create Zigbee OTA image'
-	@mkdir -p $(ZBO_PATH)
-	@python3 $(zb_OTA) $(BIN_FILE) -p $(ZBO_PATH)
-	@echo 'Finished building: $@'
+	@$(PYTHON) $(zb_OTA) $(BIN_FILE) -p $(BIN_PATH)
+	@echo ' '
 
 sizedummy: $(ELF_FILE)
-	@python3 $(PROJECT_PATH)/TlsrMemInfo.py -t $(TC32_PATH)tc32-elf-nm $(ELF_FILE)
+	@$(PYTHON) $(PROJECT_PATH)/TlsrMemInfo.py -t $(TC32_PATH)tc32-elf-nm $(ELF_FILE)
 
 clean:
 	-$(RM) $(FLASH_IMAGE) $(ELFS) $(OBJS) $(LST) $(SIZEDUMMY) $(ELF_FILE) $(BIN_FILE) $(LST_FILE)

@@ -8,31 +8,25 @@
 #define STACK_RELEASE						0x30 // stack release 3.0
 #define STACK_BUILD							0x01 // stack build 01
 
+// DevID:
+#ifndef DEVICE_CGG1_ver
+#define DEVICE_CGG1_ver		 0 // =2022 - CGG1-M version 2022, or = 0 - CGG1-M version 2020,2021
+#endif
+#define DEVICE_MHO_C401   	 1	// E-Ink display MHO-C401 2020
+#if DEVICE_CGG1_ver == 0     
+#define DEVICE_CGG1 		 2  // E-Ink display Old CGG1-M "Qingping Temp & RH Monitor"
+#else
+#define DEVICE_CGG1 		 7  // E-Ink display New CGG1-M "Qingping Temp & RH Monitor"
+#endif
+#define DEVICE_CGDK2 		 6  // LCD display "Qingping Temp & RH Monitor Lite"
+#define DEVICE_MHO_C401N   	 8	// E-Ink display MHO-C401 2022
+#define DEVICE_MJWSD05MMC	 9  // LCD display MJWSD05MMC
+#define DEVICE_LYWSD03MMC   10	// LCD display LYWSD03MMC
+#define DEVICE_MHO_C122   	11	// LCD display MHO_C122
+// Ext.devID:
+#define DEVICE_TNK01   		16	// DIY, PB-03F module
+#define DEVICE_TS0201   	17	// ZigBee TS0201, analog: IH-K009
 
-/*
-enum {
-	HW_VER_LYWSD03MMC_B14 = 0,
-	HW_VER_MHO_C401,		//1
-	HW_VER_CGG1,			//2
-	HW_VER_LYWSD03MMC_B19,	//3
-	HW_VER_LYWSD03MMC_B16,	//4
-	HW_VER_LYWSD03MMC_B17,	//5
-	HW_VER_CGDK2,			//6
-	HW_VER_CGG1_2022,		//7
-	HW_VER_MHO_C401_2022,	//8
-	HW_VER_MJWSD05MMC,		//9
-	HW_VER_LYWSD03MMC_B15,	//10
-	HW_VER_MHO_C122,		//11
-	// 12,13,14 reserved TH LCD/EPD
-	HW_VER_USER = 15,
-	HW_VER_TNK,				//16
-	HW_VER_TS0201_TZ3000,	//17
-	HW_VER_TS0202_TZ3000,	//18
-} HW_VERSION_ID;
-*/
-
-#define DEVICE_TS0201   	16	// ZigBee TS0201, analog: IH-K009
-#define DEVICE_TNK01   		17	// DIY, PB-03F module
 
 #ifndef DEVICE_TYPE
 #define DEVICE_TYPE DEVICE_TS0201

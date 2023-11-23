@@ -11,7 +11,9 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 
 ![pgm](https://raw.githubusercontent.com/pvvx/BLE_THSensor/master/img/ts0201pgm.png)
 
-Файл прошивки: [TS0201_v45.bin](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/TS0201_v45.bin)
+Файл прошивки: [TS0201_v45.bin](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/bin/TS0201_v45.bin)
+
+Файл прошивки для восстановления из Zigbee в BLE: [1141-0211-99993001-TS0201_v45.zigbee](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/bin/1141-0211-99993001-TS0201_v45.zigbee)
 
 Более сложный программатор-эмулятор Telink-Swire с переходом на UART связь: [TlsrComProg825x](https://github.com/pvvx/TlsrComProg825x)
 

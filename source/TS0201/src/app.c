@@ -68,7 +68,7 @@ const cfg_t def_cfg = {
 		.measure_interval = 4, // * advertising_interval = 10 sec
 		.flg.temp_F_or_C = false,
 		.hw_cfg.hwver = 0xf,
-		.ext_hw_id = (USE_EXT_OTA << 7) | DEVICE_TYPE,
+		.ext_hw_id = (USE_EXT_OTA << 7) | (DEVICE_TYPE - 16),
 #if USE_FLASH_MEMO
 		.averaging_measurements = 180, // * measure_interval = 10 * 180 = 1800 sec = 30 minutes
 #endif
@@ -135,7 +135,7 @@ void test_config(void) {
 	}
 	my_periConnParameters.timeout = connection_timeout;
 	cfg.hw_cfg.hwver = 0x0f;
-	cfg.ext_hw_id = DEVICE_TYPE;
+	cfg.ext_hw_id = (USE_EXT_OTA << 7) | (DEVICE_TYPE - 16);
 	my_RxTx_Data[0] = CMD_ID_CFG;
 	my_RxTx_Data[1] = VERSION;
 	memcpy(&my_RxTx_Data[2], &cfg, sizeof(cfg));
