@@ -269,7 +269,7 @@ void user_init_normal(void) {//this will get executed one time after power up
 	start_tst_battery();
 	flash_unlock();
 	random_generator_init(); //must
-#if	1 // USE_EXT_OTA
+#if !ZIGBEE_TYUA_OTA // USE_EXT_OTA
 	big_to_low_ota(); // Correct FW OTA address? Reformat Big OTA to Low OTA
 #endif
 	// Read config

@@ -3,6 +3,7 @@
 #include "drivers.h"
 #include "stack/ble/ble.h"
 #include "vendor/common/user_config.h"
+#include "ext_ota.h"
 
 #include "i2c.h"
 
@@ -183,10 +184,13 @@ _attribute_ram_code_ int main (void) {    //must run in ramcode
 	if (deepRetWakeUp)
 		//MCU wake_up from deepSleep retention mode
 		user_init_deepRetn();
-	else
+	else {
+#if ZIGBEE_TYUA_OTA
+		tuya_zigbee_ota();
+#endif
 		//MCU power_on or wake_up from deepSleep mode
 		user_init_normal();
-
+	}
 #if (MODULE_WATCHDOG_ENABLE)
 	reg_tmr_ctrl = MASK_VAL(
 		FLD_TMR_WD_CAPT, (MODULE_WATCHDOG_ENABLE ? (WATCHDOG_INIT_TIMEOUT * CLOCK_SYS_CLOCK_1MS >> 18):0)

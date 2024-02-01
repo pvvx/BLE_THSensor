@@ -3,15 +3,15 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 
 <img src="https://pvvx.github.io/TS0201_TZ3000/img/ts0201_.jpg" width="120"/>
 
-* Zigbee firmware for [TS0201_TZ3000](https://github.com/pvvx/ZigbeeTLc)
+* Вариант Zigbee firmware находится в [ZigbeeTLc](https://github.com/pvvx/ZigbeeTLc)
 
-Прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201_TZ3000).
+Первоначально прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201_TZ3000) или с помощью Zigbee OTA файлом [1141-d3a3-00993001-TS0201_v45.zigbee](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/bin/1141-d3a3-00993001-TS0201_v45.zigbee)
 
 Самый простой программатор-эмулятор Telink-Swire без обратной связи: [WebUSBCOMflasher](https://pvvx.github.io/ATC_MiThermometer/USBCOMFlashTx.html)
 
 ![pgm](https://raw.githubusercontent.com/pvvx/BLE_THSensor/master/img/ts0201pgm.png)
 
-Файл прошивки: [TS0201_v45.bin](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/bin/TS0201_v45.bin)
+Файл прошивки для программатора или BLE OTA: [TS0201_v45.bin](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/bin/TS0201_v45.bin)
 
 Файл прошивки для восстановления из Zigbee в BLE: [1141-0211-99993001-TS0201_v45.zigbee](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/bin/1141-0211-99993001-TS0201_v45.zigbee)
 

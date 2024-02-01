@@ -43,7 +43,7 @@ void cmd_parser(void * p) {
 			p->hw_version = DEVICE_TYPE + 0x100;
 			p->sw_version = VERSION;
 			p->dev_spec_data = 0;
-			p->services = 0;
+			p->services = 0x01fff;
 			olen = sizeof(dev_id_t);
 		} else if (cmd == CMD_ID_MEASURE) { // Start/stop notify measures in connection mode
 			if(len >= 2)

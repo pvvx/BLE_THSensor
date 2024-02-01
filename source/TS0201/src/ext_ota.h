@@ -43,6 +43,7 @@ extern ext_ota_t ext_ota;
 uint8_t check_ext_ota(uint32_t ota_addr, uint32_t ota_size);
 void clear_ota_area(void);
 void big_to_low_ota(void);
+void tuya_zigbee_ota(void);
 
 #endif // USE_EXT_OTA
 

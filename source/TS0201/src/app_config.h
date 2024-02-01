@@ -55,6 +55,8 @@ extern "C" {
 
 #if DEVICE_TYPE == DEVICE_TS0201
 
+#define ZIGBEE_TYUA_OTA 	1
+
 #define FLASH_SIZE_1M	1
 
 // GPIO_PB1 - TX

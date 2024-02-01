@@ -27,6 +27,8 @@
 #define DEVICE_TNK01   		16	// DIY, PB-03F module
 #define DEVICE_TS0201   	17	// ZigBee TS0201, analog: IH-K009
 
+#define DEVICE_ORIG_TYUA_TS0201  0xA3D3 // original Tuya TS0201  _TZ3000_qsefbina _TZ3000_xr3htd96
+
 
 #ifndef DEVICE_TYPE
 #define DEVICE_TYPE DEVICE_TS0201

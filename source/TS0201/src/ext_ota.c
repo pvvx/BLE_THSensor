@@ -30,6 +30,7 @@
 
 RAM ext_ota_t ext_ota;
 
+#if !ZIGBEE_TYUA_OTA
 /* Reformat Big OTA to Low OTA */
 void big_to_low_ota(void) {
 	// find the real FW flash address
@@ -72,6 +73,67 @@ void big_to_low_ota(void) {
 			start_reboot();
 	}
 }
+#else
+_attribute_ram_code_
+void tuya_zigbee_ota(void) {
+	// find the real FW flash address
+	uint32_t id = ID_BOOTABLE;
+	uint32_t size;
+	uint32_t faddrr = OTA1_FADDR;
+	uint32_t faddrw = OTA2_FADDR;
+	uint32_t faddrs = OTA2_FADDR;
+	uint32_t buf_blk[64];
+	flash_unlock();
+	flash_read_page(faddrr, 16, (unsigned char *) &buf_blk);
+	if(buf_blk[2] == id) {
+		faddrr = 0x8000;
+		flash_read_page(faddrr, 16, (unsigned char *) &buf_blk);
+		if(buf_blk[2] != id)
+			return;
+	} else {
+		faddrr = BIG_OTA2_FADDR;
+		flash_read_page(faddrr, 16, (unsigned char *) &buf_blk);
+		if(buf_blk[2] != id)
+			return;
+		faddrw = OTA1_FADDR;
+	}
+	flash_read_page(faddrr, sizeof(buf_blk), (unsigned char *) &buf_blk);
+	if(buf_blk[2] == id && buf_blk[6] > FLASH_SECTOR_SIZE && buf_blk[6] < SIZE_LOW_OTA) {
+		faddrs = faddrw;
+		buf_blk[2] &= 0xffffffff; // clear id "bootable"
+		size = buf_blk[6];
+		size += FLASH_SECTOR_SIZE - 1;
+		size &= ~(FLASH_SECTOR_SIZE - 1);
+		size += faddrw;
+		flash_erase_sector(faddrw); // 45 ms, 4 mA
+		flash_write_page(faddrw, sizeof(buf_blk), (unsigned char *) &buf_blk);
+		faddrr += sizeof(buf_blk);
+		// size += faddrw;
+		faddrw += sizeof(buf_blk);
+		while(faddrw < size) {
+			if((faddrw & (FLASH_SECTOR_SIZE - 1)) == 0)
+				flash_erase_sector(faddrw); // 45 ms, 4 mA
+				// rd-wr 4kB - 20 ms, 4 mA
+				flash_read_page(faddrr, sizeof(buf_blk), (unsigned char *) &buf_blk);
+			faddrr += sizeof(buf_blk);
+			flash_write_page(faddrw, sizeof(buf_blk), (unsigned char *) &buf_blk);
+			faddrw += sizeof(buf_blk);
+		}
+		// set id "bootable" to new segment
+		flash_write_page(faddrs+8, sizeof(id), (unsigned char *) &id);
+		if(faddrs) {
+			// clear the "bootable" identifier on the current OTA segment?
+			flash_erase_sector(0);
+			flash_erase_sector(0x8000);
+			flash_erase_sector(0x76000);
+			flash_read_page(0xff000, sizeof(buf_blk), (unsigned char *) &buf_blk);
+			flash_write_page(0x76000, sizeof(buf_blk), (unsigned char *) &buf_blk);
+		}
+		while(1)
+			reg_pwdn_ctrl = BIT(5);
+	}
+}
+#endif
 
 uint32_t check_sector_clear(uint32_t addr) {
 	uint32_t faddr = addr, efaddr, fbuf;
