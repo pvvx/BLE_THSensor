@@ -19,6 +19,7 @@ endif
 PYTHON ?= python3
 TL_Check = $(PROJECT_PATH)/../utils/tl_check_fw.py
 zb_OTA = $(PROJECT_PATH)/../utils/zigbee_ota.py
+zb_bin_OTA = $(PROJECT_PATH)/../utils/zb_bin_ota.py
 
 COMPILEOS = $(shell uname -o)
 LINUX_OS = GNU/Linux
@@ -141,6 +142,9 @@ $(BIN_FILE): $(ELF_FILE)
 	@echo ' '
 	@echo 'Create Zigbee OTA image'
 	@$(PYTHON) $(zb_OTA) $(BIN_FILE) -p $(BIN_PATH)
+	@echo ' '
+	@echo 'Create Zigbee Tuya OTA image'
+	@$(PYTHON) $(zb_bin_OTA) $(BIN_FILE) $(BIN_PATH)/$(PROJECT_NAME) -m0x1141 -i0xd3a3 -v0x00993001 -s"TS201 Zgbee to BLE"
 	@echo ' '
 
 sizedummy: $(ELF_FILE)
