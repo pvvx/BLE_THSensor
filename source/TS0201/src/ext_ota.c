@@ -123,11 +123,14 @@ void tuya_zigbee_ota(void) {
 		flash_write_page(faddrs+8, sizeof(id), (unsigned char *) &id);
 		if(faddrs) {
 			// clear the "bootable" identifier on the current OTA segment?
+			flash_erase_sector(CFG_ADR_MAC);
+			flash_read_page(0xff000, 8, (unsigned char *) &buf_blk);
+			uint16_t *p = (uint16_t *)buf_blk;
+			if(p[2] == 0xa4c1)
+				flash_write_page(CFG_ADR_MAC, 8, (unsigned char *) &buf_blk);
 			flash_erase_sector(0);
 			flash_erase_sector(0x8000);
-			flash_erase_sector(0x76000);
-			flash_read_page(0xff000, sizeof(buf_blk), (unsigned char *) &buf_blk);
-			flash_write_page(0x76000, sizeof(buf_blk), (unsigned char *) &buf_blk);
+			flash_erase_sector(CFG_ADR_PEER);
 		}
 		while(1)
 			reg_pwdn_ctrl = BIT(5);

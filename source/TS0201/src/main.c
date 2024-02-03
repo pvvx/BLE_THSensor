@@ -169,6 +169,12 @@ _attribute_ram_code_ void irq_handler(void) {
  */
 _attribute_ram_code_ int main (void) {    //must run in ramcode
 	blc_pm_select_internal_32k_crystal(); // or blc_pm_select_external_32k_crystal();
+#if ZIGBEE_TYUA_OTA
+	if(*(uint32_t *)(0x08008) == 0x544c4e4b) {
+		clock_init(SYS_CLK_TYPE);
+		tuya_zigbee_ota();
+	}
+#endif
 	cpu_wakeup_init();
 	int deepRetWakeUp = pm_is_MCU_deepRetentionWakeup();  //MCU deep retention wakeUp
 	_gpio_init(!deepRetWakeUp);  //analog resistance will keep available in deepSleep mode, so no need initialize again
@@ -185,10 +191,10 @@ _attribute_ram_code_ int main (void) {    //must run in ramcode
 		//MCU wake_up from deepSleep retention mode
 		user_init_deepRetn();
 	else {
+		//MCU power_on or wake_up from deepSleep mode
 #if ZIGBEE_TYUA_OTA
 		tuya_zigbee_ota();
 #endif
-		//MCU power_on or wake_up from deepSleep mode
 		user_init_normal();
 	}
 #if (MODULE_WATCHDOG_ENABLE)

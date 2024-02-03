@@ -7,6 +7,8 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 
 Первоначально прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201_TZ3000) или с помощью Zigbee OTA файлом [1141-d3a3-00993001-TS0201_v45.zigbee](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/bin/1141-d3a3-00993001-TS0201_v45.zigbee)
 
+После прошивки появится BLE устройство с именем "THS_xxxxxx", где "xxxxxx" - три последних байта MAC в hex виде.
+
 Самый простой программатор-эмулятор Telink-Swire без обратной связи: [WebUSBCOMflasher](https://pvvx.github.io/ATC_MiThermometer/USBCOMFlashTx.html)
 
 ![pgm](https://raw.githubusercontent.com/pvvx/BLE_THSensor/master/img/ts0201pgm.png)
