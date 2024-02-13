@@ -26,6 +26,11 @@
 // Ext.devID:
 #define DEVICE_TNK01   		16	// DIY, PB-03F module
 #define DEVICE_TS0201   	17	// ZigBee TS0201, analog: IH-K009
+#define DEVICE_TS0202		18	// TS0202_TZ3000
+#define DEVICE_THB2			19	// PHY62x2 BLE
+#define DEVICE_BTH01		20	// PHY62x2 BLE
+#define DEVICE_TH05			21	// PHY62x2 BLE LCD
+#define DEVICE_TH03Z   		22	// ZigBee TH03Z
 
 #define DEVICE_ORIG_TYUA_TS0201  0xA3D3 // original Tuya TS0201  _TZ3000_qsefbina _TZ3000_xr3htd96
 

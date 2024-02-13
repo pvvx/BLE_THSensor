@@ -52,7 +52,6 @@ struct __attribute__((packed)) _cht8305_config_t{
 	uint16_t srst		: 1;
 } cht8305_config_t;
 
-
 extern uint8_t sensor_i2c_addr;
 extern uint32_t sensor_id;
 

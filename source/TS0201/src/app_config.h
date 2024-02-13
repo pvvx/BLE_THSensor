@@ -25,10 +25,16 @@ extern "C" {
 // Ext.devID:
 #define DEVICE_TNK01   		16	// DIY, PB-03F module
 #define DEVICE_TS0201   	17	// ZigBee TS0201, analog: IH-K009
+#define DEVICE_TS0202		18	// TS0202_TZ3000
+#define DEVICE_THB2			19	// PHY62x2 BLE
+#define DEVICE_BTH01		20	// PHY62x2 BLE
+#define DEVICE_TH05			21	// PHY62x2 BLE LCD
+#define DEVICE_TH03Z   		22	// ZigBee TH03Z
 
-//#ifndef DEVICE_TYPE
-#define DEVICE_TYPE			DEVICE_TS0201 // Use TS0201 only
-//#endif
+
+#ifndef DEVICE_TYPE
+#define DEVICE_TYPE			DEVICE_TS0201 // Use TS0201 or DEVICE_TH03Z only
+#endif
 
 #define BLE_SECURITY_ENABLE 1 // = 1 support pin-code
 #define BLE_EXT_ADV 		1 // = 1 support extension advertise (Test Only!)
@@ -53,9 +59,48 @@ extern "C" {
 
 #define UART_PRINT_DEBUG_ENABLE		0 // =1 use u_printf() (PA7/SWS), source: SDK/components/application/print/u_printf.c
 
+#define ZIGBEE_TYUA_OTA 	1
+
 #if DEVICE_TYPE == DEVICE_TS0201
 
-#define ZIGBEE_TYUA_OTA 	1
+#define FLASH_SIZE_1M	1
+
+// GPIO_PB1 - TX
+// GPIO_PB4 - LED
+// GPIO_PB7 - RX
+// GPIO_PC0 - KEY
+// GPIO_PC2 - SDA
+// GPIO_PC3 - SCL
+// GPIO_PD7 - Alert
+
+#define SHL_ADC_VBAT	1  // "B0P" in adc.h
+#define GPIO_VBAT	GPIO_PB0 // missing pin on case TLSR8251F512ET24
+#define PB0_INPUT_ENABLE	1
+#define PB0_DATA_OUT		1
+#define PB0_OUTPUT_ENABLE	1
+#define PB0_FUNC			AS_GPIO
+
+#define I2C_SCL 	GPIO_PC3
+#define I2C_SDA 	GPIO_PC2
+#define I2C_GROUP 	I2C_GPIO_GROUP_C2C3
+#define PULL_WAKEUP_SRC_PC2	PM_PIN_PULLUP_10K
+#define PULL_WAKEUP_SRC_PC3	PM_PIN_PULLUP_10K
+
+#define GPIO_KEY			GPIO_PC0
+#define PC0_INPUT_ENABLE	1
+#define PC0_DATA_OUT		0
+#define PC0_OUTPUT_ENABLE	0
+#define PC0_FUNC			AS_GPIO
+#define PULL_WAKEUP_SRC_PC0	PM_PIN_PULLUP_10K
+
+#define GPIO_LED			GPIO_PB4
+#define PB4_INPUT_ENABLE	1
+#define PB4_DATA_OUT		1
+#define PB4_OUTPUT_ENABLE	0
+#define PB4_FUNC			AS_GPIO
+#define PULL_WAKEUP_SRC_PB4	PM_PIN_PULLDOWN_100K
+
+#elif DEVICE_TYPE == DEVICE_TH03Z
 
 #define FLASH_SIZE_1M	1
 

@@ -91,10 +91,18 @@ RAM uint8_t my_SerialStr[21]; // "556202-C86013-0123456"
 #endif
 
 #if DEVICE_TYPE == DEVICE_TS0201
-static const u8 my_ModelStr[] = {"THSensors"};
+static const u8 my_ModelStr[] = {"TS0201"};
 static const u8 my_HardStr[4] = {"V1.0"};// = {"V1.0"};
 #if !USE_FLASH_SERIAL_UID
 /static const u8 my_SerialStr[] = {"0000-0000-0000-0001"}; // "0000-0000-0000-00000"
+#endif
+static const u8 my_SoftStr[] = {'V','0'+(VERSION>>4),'.','0'+(VERSION&0x0f)}; // "0109"
+static const u8 my_ManStr[] = {"DIY.home"};
+#elif DEVICE_TYPE == DEVICE_TH03Z
+static const u8 my_ModelStr[] = {"TH03Z"};
+static const u8 my_HardStr[4] = {"V1.0"};// = {"V1.0"};
+#if !USE_FLASH_SERIAL_UID
+/static const u8 my_SerialStr[] = {"0000-0000-0000-0002"}; // "0000-0000-0000-00000"
 #endif
 static const u8 my_SoftStr[] = {'V','0'+(VERSION>>4),'.','0'+(VERSION&0x0f)}; // "0109"
 static const u8 my_ManStr[] = {"DIY.home"};

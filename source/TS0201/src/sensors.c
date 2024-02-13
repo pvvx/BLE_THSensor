@@ -13,6 +13,121 @@
 RAM uint8_t sensor_i2c_addr;
 RAM uint32_t sensor_id;
 
+#define SHT30_POWER_TIMEOUT_us	1500	// time us
+#define SHT30_SOFT_RESET_us		1500	// time us
+#define SHT30_HI_MEASURE_us		15500	// time us
+#define SHT30_LO_MEASURE_us		4500	// time us
+
+#define SHT30_I2C_ADDR_A	0x44
+#define SHT30_I2C_ADDR_B	0x45
+#define SHT30_SOFT_RESET	0xA230 // Soft reset command
+#define SHT30_HIMEASURE		0x0024 // Measurement commands, Clock Stretching Disabled, Normal Mode, Read T First
+#define SHT30_HIMEASURE_CS	0x062C // Measurement commands, Clock Stretching, Normal Mode, Read T First
+#define SHT30_LPMEASURE		0x1624 // Measurement commands, Clock Stretching Disabled, Low Power Mode, Read T First
+#define SHT30_LPMEASURE_CS	0x102C // Measurement commands, Clock Stretching, Low Power Mode, Read T First
+
+#define CRC_POLYNOMIAL  0x131 // P(x) = x^8 + x^5 + x^4 + 1 = 100110001
+
+#if DEVICE_TYPE	== DEVICE_TH03Z
+
+static _attribute_ram_code_
+void send_sensor_word(uint16_t cmd) {
+	if ((reg_clk_en0 & FLD_CLK0_I2C_EN)==0)
+			init_i2c();
+	reg_i2c_id = sensor_i2c_addr;
+	reg_i2c_adr_dat = cmd;
+	reg_i2c_ctrl = FLD_I2C_CMD_START | FLD_I2C_CMD_ID | FLD_I2C_CMD_ADDR | FLD_I2C_CMD_DO | FLD_I2C_CMD_STOP;
+	while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+}
+
+_attribute_ram_code_
+uint8_t sensor_crc(uint8_t crc) {
+	int i;
+	for(i = 8; i > 0; i--) {
+		if (crc & 0x80)
+			crc = (crc << 1) ^ (CRC_POLYNOMIAL & 0xff);
+		else
+			crc = (crc << 1);
+	}
+	return crc;
+}
+
+void check_sensor(void) {
+	sensor_i2c_addr = (uint8_t) scan_i2c_addr(SHT30_I2C_ADDR_A << 1);
+	if(!sensor_i2c_addr)
+		sensor_i2c_addr = (uint8_t) scan_i2c_addr(SHT30_I2C_ADDR_B << 1);
+	if(sensor_i2c_addr) {
+		sensor_id = (0x30<<16) | sensor_i2c_addr;
+		send_sensor_word(SHT30_SOFT_RESET); // Soft reset command
+		sleep_us(SHT30_SOFT_RESET_us);
+		send_sensor_word(SHT30_HIMEASURE); // start measure T/H
+	}
+}
+
+void init_sensor(void) {
+	send_i2c_byte(0, 0x06); // Reset command using the general call address
+	sleep_us(SHT30_POWER_TIMEOUT_us);
+	check_sensor();
+}
+
+_attribute_ram_code_ __attribute__((optimize("-Os")))
+int read_sensor_cb(void) {
+	uint16_t _temp;
+	uint16_t _humi;
+	uint8_t data, crc; // calculated checksum
+	int i;
+	if ((reg_clk_en0 & FLD_CLK0_I2C_EN)==0)
+		init_i2c();
+	if (sensor_i2c_addr == 0) {
+		check_sensor();
+		return 0;
+	}
+	reg_i2c_id = sensor_i2c_addr | FLD_I2C_WRITE_READ_BIT;
+	i = 256;
+	do {
+		reg_i2c_ctrl = FLD_I2C_CMD_ID | FLD_I2C_CMD_START;
+		while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+		if (reg_i2c_status & FLD_I2C_NAK) {
+			reg_i2c_ctrl = FLD_I2C_CMD_STOP;
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+		} else { // ACK ok
+			reg_i2c_ctrl = FLD_I2C_CMD_DI | FLD_I2C_CMD_READ_ID;
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+			data = reg_i2c_di;
+			reg_i2c_ctrl = FLD_I2C_CMD_DI | FLD_I2C_CMD_READ_ID;
+			_temp = data << 8;
+			crc = sensor_crc(data ^ 0xff);
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+			data = reg_i2c_di;
+			reg_i2c_ctrl = FLD_I2C_CMD_DI | FLD_I2C_CMD_READ_ID;
+			_temp |= data;
+			crc = sensor_crc(crc ^ data);
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+			data = reg_i2c_di;
+			reg_i2c_ctrl = FLD_I2C_CMD_DI | FLD_I2C_CMD_READ_ID;
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+			_humi = reg_i2c_di << 8;
+			reg_i2c_ctrl = FLD_I2C_CMD_DI | FLD_I2C_CMD_READ_ID | FLD_I2C_CMD_ACK;
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+			_humi |= reg_i2c_di;
+			reg_i2c_ctrl = FLD_I2C_CMD_STOP;
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+			if (crc == data && _temp != 0xffff) {
+				measured_data.temp = ((int32_t)(17500*_temp) >> 16) - 4500 + cfg.temp_offset * 10; // x 0.01 C
+				measured_data.humi = ((uint32_t)(10000*_humi) >> 16) + cfg.humi_offset * 10; // x 0.01 %
+				if (measured_data.humi < 0) measured_data.humi = 0;
+				else if (measured_data.humi > 9999) measured_data.humi = 9999;
+				//measured_data.count++;
+				send_sensor_word(SHT30_HIMEASURE); // start measure T/H
+				return 1;
+			}
+		}
+	} while (i--);
+	check_sensor();
+	return 0;
+}
+
+#else
 
 void init_sensor(void) {
 	uint8_t buf[4];
@@ -70,4 +185,4 @@ _attribute_ram_code_ __attribute__((optimize("-Os"))) int read_sensor_cb(void) {
 	return 0;
 }
 
-
+#endif
