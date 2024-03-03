@@ -32,10 +32,10 @@ RAM memo_rd_t rd_memo;
 
 static uint32_t test_next_memo_sec_addr(uint32_t faddr) {
 	uint32_t mfaddr = faddr;
-	if (mfaddr >= FLASH_ADDR_END_MEMO)
-		mfaddr = FLASH_ADDR_START_MEMO;
-	else if (mfaddr < FLASH_ADDR_START_MEMO)
-		mfaddr = FLASH_ADDR_END_MEMO - FLASH_SECTOR_SIZE;
+	if (mfaddr >= memo.end_addr)
+		mfaddr = memo.start_addr;
+	else if (mfaddr < memo.start_addr)
+		mfaddr = memo.end_addr - FLASH_SECTOR_SIZE;
 	return mfaddr;
 }
 
@@ -56,30 +56,25 @@ static void memo_sec_close(uint32_t faddr) {
 	memo_sec_init(test_next_memo_sec_addr(mfaddr + FLASH_SECTOR_SIZE));
 }
 
-#if 0
-void memo_init_count(void) {
-	memo_head_t mhs;
-	uint32_t cnt, i = 0;
-	uint32_t faddr = memo.faddr & (~(FLASH_SECTOR_SIZE-1));
-	cnt = memo.faddr - faddr - sizeof(memo_head_t); // смещение в секторе
-	cnt /= sizeof(memo_blk_t);
-	do {
-		faddr = test_next_memo_sec_addr(faddr - FLASH_SECTOR_SIZE);
-		_flash_read(faddr, &mhs, sizeof(mhs));
-		i++;
-	} while (mhs.id == MEMO_SEC_ID && mhs.flg == 0 && i < MEMO_SEC_COUNT);
-	cnt += i *MEMO_SEC_RECS;
-	memo.count = cnt;
-}
-#endif
-
 __attribute__((optimize("-Os")))
 void memo_init(void) {
 	memo_head_t mhs;
+	uint8_t buf[4];
 	uint32_t tmp, fsec_end;
-	uint32_t faddr = FLASH_ADDR_START_MEMO;
+	uint32_t faddr;
+	flash_read_id(buf);
+	if(buf[2] == 0x14) {
+		memo.start_addr = FLASH1M_ADDR_START_MEMO;
+		memo.end_addr = FLASH1M_ADDR_END_MEMO;
+		memo.sectors = MEMO1M_SEC_RECS;
+	} else {
+		memo.start_addr = FLASH_ADDR_START_MEMO;
+		memo.end_addr = FLASH_ADDR_END_MEMO;
+		memo.sectors = MEMO_SEC_RECS;
+	}
 	memo.cnt_cur_sec = 0;
-	while (faddr < FLASH_ADDR_END_MEMO) {
+	faddr = memo.start_addr;
+	while (faddr < memo.end_addr) {
 		_flash_read(faddr, sizeof(mhs), &mhs);
 		if (mhs.id != MEMO_SEC_ID) {
 			memo_sec_init(faddr);
@@ -102,21 +97,21 @@ void memo_init(void) {
 		}
 		faddr += FLASH_SECTOR_SIZE;
 	}
-	memo_sec_init(FLASH_ADDR_START_MEMO);
+	memo_sec_init(memo.start_addr);
 	return;
 }
 
 void clear_memo(void) {
 	uint32_t tmp;
-	uint32_t faddr = FLASH_ADDR_START_MEMO + FLASH_SECTOR_SIZE;
+	uint32_t faddr = memo.start_addr + FLASH_SECTOR_SIZE;
 	memo.cnt_cur_sec = 0;
-	while (faddr < FLASH_ADDR_END_MEMO) {
+	while (faddr < memo.end_addr) {
 		_flash_read(faddr, sizeof(tmp), &tmp);
 		if (tmp == MEMO_SEC_ID)
 			_flash_erase_sector(faddr);
 		faddr += FLASH_SECTOR_SIZE;
 	}
-	memo_sec_init(FLASH_ADDR_START_MEMO);
+	memo_sec_init(memo.start_addr);
 	return;
 }
 
@@ -129,15 +124,15 @@ unsigned get_memo(uint32_t bnum, pmemo_blk_t p) {
 	if (bnum > rd_memo.saved.cnt_cur_sec) {
 		bnum -= rd_memo.saved.cnt_cur_sec;
 		faddr -= FLASH_SECTOR_SIZE;
-		if (faddr < FLASH_ADDR_START_MEMO)
-			faddr = FLASH_ADDR_END_MEMO - FLASH_SECTOR_SIZE;
-		while (bnum > MEMO_SEC_RECS) {
-			bnum -= MEMO_SEC_RECS;
+		if (faddr < memo.start_addr)
+			faddr = memo.end_addr - FLASH_SECTOR_SIZE;
+		while (bnum > memo.sectors) {
+			bnum -= memo.sectors;
 			faddr -= FLASH_SECTOR_SIZE;
-			if (faddr < FLASH_ADDR_START_MEMO)
-				faddr = FLASH_ADDR_END_MEMO - FLASH_SECTOR_SIZE;
+			if (faddr < memo.start_addr)
+				faddr = memo.end_addr - FLASH_SECTOR_SIZE;
 		}
-		bnum = MEMO_SEC_RECS - bnum;
+		bnum = memo.sectors - bnum;
 		_flash_read(faddr, sizeof(mhs), &mhs);
 		if (mhs.id != MEMO_SEC_ID || mhs.flg != 0)
 			return 0;
@@ -188,7 +183,7 @@ void write_memo(void) {
 	_flash_write(faddr, sizeof(memo_blk_t), &mblk);
 	faddr += sizeof(memo_blk_t);
 	faddr &= (~(FLASH_SECTOR_SIZE-1));
-	if (memo.cnt_cur_sec >= MEMO_SEC_RECS - 1 ||
+	if (memo.cnt_cur_sec >= memo.sectors - 1 ||
 		(memo.faddr & (~(FLASH_SECTOR_SIZE-1))) != faddr) {
 		memo_sec_close(memo.faddr);
 	} else {

@@ -22,6 +22,8 @@ void set_SerialStr(void);
 
 #if USE_EXT_OTA  // Compatible BigOTA
 
+#define ID_BOOTABLE 0x544c4e4b
+
 // Ext.OTA return code
 enum {
 	EXT_OTA_OK = 0,		//0

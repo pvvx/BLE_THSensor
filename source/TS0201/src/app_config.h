@@ -8,32 +8,36 @@ extern "C" {
 #define EEP_SUP_VER 0x09 // EEP data minimum supported version
 
 // DevID:
-#ifndef DEVICE_CGG1_ver
-#define DEVICE_CGG1_ver		 0 // =2022 - CGG1-M version 2022, or = 0 - CGG1-M version 2020,2021
-#endif
-#define DEVICE_MHO_C401   	 1	// E-Ink display MHO-C401 2020
-#if DEVICE_CGG1_ver == 0     
-#define DEVICE_CGG1 		 2  // E-Ink display Old CGG1-M "Qingping Temp & RH Monitor"
-#else
-#define DEVICE_CGG1 		 7  // E-Ink display New CGG1-M "Qingping Temp & RH Monitor"
-#endif
-#define DEVICE_CGDK2 		 6  // LCD display "Qingping Temp & RH Monitor Lite"
-#define DEVICE_MHO_C401N   	 8	// E-Ink display MHO-C401 2022
-#define DEVICE_MJWSD05MMC	 9  // LCD display MJWSD05MMC
-#define DEVICE_LYWSD03MMC   10	// LCD display LYWSD03MMC
-#define DEVICE_MHO_C122   	11	// LCD display MHO_C122
+//#ifndef DEVICE_CGG1_ver
+//#define DEVICE_CGG1_ver	0 // =2022 - CGG1-M version 2022, or = 0 - CGG1-M version 2020,2021
+//#endif
+//#define DEVICE_MHO_C401   1	// E-Ink display MHO-C401 2020
+//#if DEVICE_CGG1_ver == 0
+//#define DEVICE_CGG1 		2  // E-Ink display Old CGG1-M "Qingping Temp & RH Monitor"
+//#else
+//#define DEVICE_CGG1 		7  // E-Ink display New CGG1-M "Qingping Temp & RH Monitor"
+//#endif
+//#define DEVICE_CGDK2 		6  // LCD display "Qingping Temp & RH Monitor Lite"
+//#define DEVICE_MHO_C401N   	 8	// E-Ink display MHO-C401 2022
+//#define DEVICE_MJWSD05MMC	9  // LCD display MJWSD05MMC
+//#define DEVICE_LYWSD03MMC 10	// LCD display LYWSD03MMC
+//#define DEVICE_MHO_C122   11	// LCD display MHO_C122
 // Ext.devID:
-#define DEVICE_TNK01   		16	// DIY, PB-03F module
+//#define BOARD_TB03F		16 // DIY TB-03F-Kit
 #define DEVICE_TS0201   	17	// ZigBee TS0201, analog: IH-K009
-#define DEVICE_TS0202		18	// TS0202_TZ3000
-#define DEVICE_THB2			19	// PHY62x2 BLE
-#define DEVICE_BTH01		20	// PHY62x2 BLE
-#define DEVICE_TH05			21	// PHY62x2 BLE LCD
+//#define DEVICE_TNKS   	18	// DIY, PB-03F module, Water tank controller (not yet published at the moment)
+//#define DEVICE_THB2		19	// PHY62x2 BLE
+//#define DEVICE_BTH01		20	// PHY62x2 BLE
+//#define DEVICE_TH05		21	// PHY62x2 BLE LCD
 #define DEVICE_TH03Z   		22	// ZigBee TH03Z
+//#define BOARD_THB1		23 // https://github.com/pvvx/THB2
+//#define BOARD_TH05D		24 // TH05_V1.3 https://github.com/pvvx/THB2
+//#define BOARD_TH05F		25 // TH05Y_V1.2 https://github.com/pvvx/THB2
+//#define BOARD_THB3		26 // https://github.com/pvvx/THB2
 
 
 #ifndef DEVICE_TYPE
-#define DEVICE_TYPE			DEVICE_TS0201 // Use TS0201 or DEVICE_TH03Z only
+#define DEVICE_TYPE			DEVICE_TH03Z // Use TS0201 or DEVICE_TH03Z only
 #endif
 
 #define BLE_SECURITY_ENABLE 1 // = 1 support pin-code
@@ -59,11 +63,9 @@ extern "C" {
 
 #define UART_PRINT_DEBUG_ENABLE		0 // =1 use u_printf() (PA7/SWS), source: SDK/components/application/print/u_printf.c
 
-#define ZIGBEE_TYUA_OTA 	1
+#define ZIGBEE_TUYA_OTA 	1
 
 #if DEVICE_TYPE == DEVICE_TS0201
-
-#define FLASH_SIZE_1M	1
 
 // GPIO_PB1 - TX
 // GPIO_PB4 - LED
@@ -101,8 +103,6 @@ extern "C" {
 #define PULL_WAKEUP_SRC_PB4	PM_PIN_PULLDOWN_100K
 
 #elif DEVICE_TYPE == DEVICE_TH03Z
-
-#define FLASH_SIZE_1M	1
 
 // GPIO_PB1 - TX
 // GPIO_PB4 - LED
@@ -189,7 +189,7 @@ enum{
 #define BLE_HOST_SMP_ENABLE BLE_SECURITY_ENABLE
 
 //#define CHG_CONN_PARAM	// test
-#define DEV_NAME "TS0201" // not used (see SDK "blt_config.h")
+#define DEV_NAME "pvvx_ble" // not used (see SDK "blt_config.h")
 
 #include "vendor/common/default_config.h"
 

@@ -18,8 +18,6 @@
 
 #if USE_EXT_OTA  // Compatible BigOTA
 
-#define ID_BOOTABLE 0x544c4e4b
-
 #define OTA1_FADDR 0x00000
 #define OTA2_FADDR 0x20000
 #define SIZE_LOW_OTA OTA2_FADDR
@@ -30,7 +28,8 @@
 
 RAM ext_ota_t ext_ota;
 
-#if !ZIGBEE_TYUA_OTA
+#if !ZIGBEE_TUYA_OTA
+
 /* Reformat Big OTA to Low OTA */
 void big_to_low_ota(void) {
 	// find the real FW flash address
@@ -73,7 +72,9 @@ void big_to_low_ota(void) {
 			start_reboot();
 	}
 }
+
 #else
+
 _attribute_ram_code_
 void tuya_zigbee_ota(void) {
 	// find the real FW flash address

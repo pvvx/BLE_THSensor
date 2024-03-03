@@ -5,7 +5,7 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 
 * Вариант Zigbee firmware находится в [ZigbeeTLc](https://github.com/pvvx/ZigbeeTLc)
 
-Добавлена [Beta версия для TH03Z](https://github.com/pvvx/BLE_THSensor/issues/9) (сенсор GXHT30). Номера оригинального TH03Z для Zigbee OTA неизвестны.
+Добавлена [Beta версия для TH03Z](https://github.com/pvvx/BLE_THSensor/issues/9) (сенсор GXHT30).
 
 TS0201 первоначально прошивается программатором через выводы разъема SWS и RST. См. [TS0201](https://pvvx.github.io/TS0201_TZ3000) или с помощью Zigbee OTA файлом [1141-d3a3-00993001-TS0201_v45.zigbee](https://github.com/pvvx/BLE_THSensor/raw/master/source/TS0201/bin/1141-d3a3-00993001-TS0201_v45.zigbee)
 
