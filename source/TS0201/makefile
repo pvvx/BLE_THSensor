@@ -10,7 +10,7 @@ PROJECT_PATH := ./src
 OUT_PATH :=./out
 BIN_PATH :=./bin
 
-PGM_PORT?=COM22
+PGM_PORT?=COM14
 
 ifneq ($(TEL_PATH)/components/drivers/8258/gpio_8258.c, $(wildcard $(TEL_PATH)/components/drivers/8258/gpio_8258.c))
 $(error "Please check SDK Path and set TEL_PATH.")
@@ -144,7 +144,7 @@ $(BIN_FILE): $(ELF_FILE)
 	@$(PYTHON) $(zb_OTA) $(BIN_FILE) -p $(BIN_PATH)
 	@echo ' '
 	@echo 'Create Zigbee Tuya OTA image'
-	@$(PYTHON) $(zb_bin_OTA) $(BIN_FILE) $(BIN_PATH)/$(PROJECT_NAME) -m0x1141 -i0xd3a3 -v0x00993001 -s"TS201 Zgbee to BLE"
+	@$(PYTHON) $(zb_bin_OTA) $(BIN_FILE) $(BIN_PATH)/$(PROJECT_NAME) -m0x1141 -i0xd3a3 -v0x00993001 -s"TS201 Zigbee to BLE"
 	@echo ' '
 
 sizedummy: $(ELF_FILE)

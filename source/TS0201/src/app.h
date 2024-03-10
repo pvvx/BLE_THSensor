@@ -97,7 +97,7 @@ typedef struct _measured_data_t {
 #endif
 	int16_t 	temp_x01; 		// x 0.1 C
 	int16_t		humi_x01; 		// x 0.1 %
-	uint8_t 	humi_x1; 		// x 1 %
+	//uint8_t 	humi_x1; 		// x 1 %
 	uint8_t 	battery_level;	// 0..100% (average_battery_mv)
 } measured_data_t;
 #define  MEASURED_MSG_SIZE  8

@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#define VERSION 0x45	 // BCD format (0x34 -> '3.4')
+#define VERSION 0x47	 // BCD format (0x34 -> '3.4')
 #define EEP_SUP_VER 0x09 // EEP data minimum supported version
 
 // DevID:
@@ -39,6 +39,36 @@ extern "C" {
 #ifndef DEVICE_TYPE
 #define DEVICE_TYPE			DEVICE_TH03Z // Use TS0201 or DEVICE_TH03Z only
 #endif
+
+// supported services by the device (bits)
+#define SERVICE_OTA			0x00000001	// OTA all enable!
+#define SERVICE_OTA_EXT		0x00000002	// Compatible BigOTA
+#define SERVICE_PINCODE 	0x00000004	// support pin-code
+#define SERVICE_BINDKEY 	0x00000008	// support encryption beacon (bindkey)
+#define SERVICE_HISTORY 	0x00000010	// flash logger enable
+#define SERVICE_SCREEN		0x00000020	// screen enable
+#define SERVICE_LE_LR		0x00000040	// support extension advertise + LE Long Range
+#define SERVICE_THS			0x00000080	// all enable
+#define SERVICE_RDS			0x00000100	// wake up when the reed switch is triggered + pulse counter
+#define SERVICE_KEY			0x00000200	//
+#define SERVICE_OUTS		0x00000400	//
+#define SERVICE_INS			0x00000800	//
+#define SERVICE_TIME_ADJUST 0x00001000	// time correction enabled
+#define SERVICE_HARD_CLOCK	0x00002000	// RTC enabled
+#define SERVICE_TH_TRG		0x00004000	// use trigger out
+
+#define DEV_SERVICES ( SERVICE_OTA\
+		| SERVICE_OTA_EXT \
+		| SERVICE_PINCODE \
+		| SERVICE_BINDKEY \
+		| SERVICE_HISTORY \
+		| SERVICE_LE_LR \
+		| SERVICE_THS \
+		| SERVICE_RDS \
+		| SERVICE_KEY \
+		| SERVICE_TIME_ADJUST \
+		| SERVICE_TH_TRG \
+)
 
 #define BLE_SECURITY_ENABLE 1 // = 1 support pin-code
 #define BLE_EXT_ADV 		1 // = 1 support extension advertise (Test Only!)

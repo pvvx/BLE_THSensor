@@ -25,6 +25,8 @@
 #define BIG_OTA2_FADDR 0x40000 // Big OTA2
 #define BIG_OTA2_FADDR_ID (BIG_OTA2_FADDR + 8)
 #define MI_HW_SAVE_FADDR (CFG_ADR_MAC+0xfe0) // check flash_erase_mac_sector()
+#define ZIGBEE_BOOT_OTA_FADDR	0x8000
+#define ZIGBEE_MAC_FADDR	0xff000
 
 RAM ext_ota_t ext_ota;
 
@@ -87,7 +89,7 @@ void tuya_zigbee_ota(void) {
 	flash_unlock();
 	flash_read_page(faddrr, 16, (unsigned char *) &buf_blk);
 	if(buf_blk[2] == id) {
-		faddrr = 0x8000;
+		faddrr = ZIGBEE_BOOT_OTA_FADDR;
 		flash_read_page(faddrr, 16, (unsigned char *) &buf_blk);
 		if(buf_blk[2] != id)
 			return;
@@ -122,16 +124,18 @@ void tuya_zigbee_ota(void) {
 		}
 		// set id "bootable" to new segment
 		flash_write_page(faddrs+8, sizeof(id), (unsigned char *) &id);
-		if(faddrs) {
-			// clear the "bootable" identifier on the current OTA segment?
-			flash_erase_sector(CFG_ADR_MAC);
-			flash_read_page(0xff000, 8, (unsigned char *) &buf_blk);
+		if(faddrs != OTA1_FADDR) { // clear the "bootable" identifier on the current OTA segment?
+			faddrw = CFG_ADR_MAC;
+			do {
+				flash_erase_sector(faddrw);
+				faddrw += FLASH_SECTOR_SIZE;
+			} while(faddrw < FMEMORY_SCFG_BASE_ADDR);
+			flash_read_page(ZIGBEE_MAC_FADDR, 8, (unsigned char *) &buf_blk);
 			uint16_t *p = (uint16_t *)buf_blk;
 			if(p[2] == 0xa4c1)
 				flash_write_page(CFG_ADR_MAC, 8, (unsigned char *) &buf_blk);
-			flash_erase_sector(0);
-			flash_erase_sector(0x8000);
-			flash_erase_sector(CFG_ADR_PEER);
+			flash_erase_sector(OTA1_FADDR);
+			flash_erase_sector(ZIGBEE_BOOT_OTA_FADDR);
 		}
 		while(1)
 			reg_pwdn_ctrl = BIT(5);

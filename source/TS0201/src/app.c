@@ -149,11 +149,11 @@ _attribute_ram_code_
 void WakeupLowPowerCb(int par) {
 	(void) par;
 	if (wrk_measure) {
-		if (read_sensor_cb()) {
+		if (read_sensor()) {
 			measured_data.count++;
 			measured_data.temp_x01 = (measured_data.temp + 5)/ 10;
 			measured_data.humi_x01 = (measured_data.humi + 5)/ 10;
-			measured_data.humi_x1 = (measured_data.humi + 50)/ 100;
+			//measured_data.humi_x1 = (measured_data.humi + 50)/ 100;
 #if USE_FLASH_MEMO
 			if (cfg.averaging_measurements)
 				write_memo();
@@ -288,6 +288,11 @@ void user_init_normal(void) {//this will get executed one time after power up
 		if (flash_read_cfg(&pincode, EEP_ID_PCD, sizeof(pincode))
 				!= sizeof(pincode))
 			pincode = 0;
+#endif
+#if (DEV_SERVICES & SERVICE_THS)
+		if (flash_read_cfg(&thsensor.coef, EEP_ID_CFS, sizeof(thsensor.coef))
+				!= sizeof(thsensor.coef))
+			memset(&thsensor.coef, 0, sizeof(thsensor.coef));
 #endif
 	} else {
 #if BLE_SECURITY_ENABLE

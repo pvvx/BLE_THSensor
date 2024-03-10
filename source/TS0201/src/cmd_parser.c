@@ -215,9 +215,8 @@ void cmd_parser(void * p) {
 			memcpy(&send_buf[2+4], &ota_firmware_size_k, 4);
 			olen = 2 + 8;
 		} else if (cmd == CMD_ID_GDEVS) {   // Get address devises
-			send_buf[1] = sensor_i2c_addr;
-			send_buf[2] = 1;	// SPI
-			olen = 2 + 1;
+			send_buf[1] = thsensor.i2c_addr;
+			olen = 1 + 1;
 		} else if (cmd == CMD_ID_I2C_SCAN) {   // Universal I2C/SMBUS read-write
 			len = 0;
 			olen = 1;
@@ -243,10 +242,25 @@ void cmd_parser(void * p) {
 				send_buf[1] = 0xff; // Error cmd
 				olen = 2;
 			}
-
+#if (DEV_SERVICES & SERVICE_THS)
+		} else if (cmd == CMD_ID_CFS) {	// Get/Set sensor config
+			if (--len > sizeof(thsensor.coef))
+				len = sizeof(thsensor.coef);
+			if (len) {
+				memcpy(&thsensor.coef, &req->dat[1], len);
+				flash_write_cfg(&thsensor.coef, EEP_ID_CFS, sizeof(thsensor.coef));
+			}
+			memcpy(&send_buf[1], &thsensor, thsensor_send_size);
+			olen = thsensor_send_size + 1;
+		} else if (cmd == CMD_ID_CFS_DEF) {	// Get/Set default sensor config
+			memset(&thsensor, 0, thsensor_send_size);
+			init_sensor();
+			memcpy(&send_buf[1], &thsensor, thsensor_send_size);
+			olen = thsensor_send_size + 1;
 		} else if (cmd == CMD_ID_SEN_ID) { // Get sensor ID
-			memcpy(&send_buf[1], &sensor_id, sizeof(sensor_id));
-			olen = sizeof(sensor_id) + 1;
+			memcpy(&send_buf[1], &thsensor.id, sizeof(thsensor.id));
+			olen = sizeof(thsensor.id) + 1;
+#endif
 			// Debug commands (unsupported in different versions!):
 		} else if (cmd == CMD_ID_EEP_RW && len > 2) {
 			send_buf[1] = req->dat[1];

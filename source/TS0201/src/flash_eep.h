@@ -14,6 +14,7 @@ extern "C" {
 
 // EEPROM IDs
 #define EEP_ID_CFG (0x0CFC) // EEP ID config data
+#define EEP_ID_CFS (0x0CF5) // EEP ID sensor coefficients
 #define EEP_ID_TRG (0x0DFE) // EEP ID trigger config data
 #define EEP_ID_RDS (0x0DCE) // EEP ID rds config data
 #define EEP_ID_HXC (0x53A3) // EEP ID hx71x config data
