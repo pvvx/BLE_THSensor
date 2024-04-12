@@ -77,7 +77,7 @@ struct __attribute__((packed)) _cht8305_config_t{
 
 const thsensor_coef_t def_thcoef_sht30 = {
 		.temp_k = 17500,
-		.humi_k = 20000,
+		.humi_k = 10000,
 		.temp_z = -4500,
 		.humi_z = 0
 };
@@ -159,7 +159,7 @@ static int read_sensor_cht8305(void) {
 	while(i--) {
 		if (read_i2c_bytes(thsensor.i2c_addr, reg_data, sizeof(reg_data)) == 0) {
 			_temp = (reg_data[0] << 8) | reg_data[1];
-			measured_data.temp = ((int32_t)(_temp * thsensor.coef.temp_k) >> 16) + thsensor.coef.temp_z; // x 0.01 C // 16500 -4000
+			measured_data.temp = ((uint32_t)(_temp * thsensor.coef.temp_k) >> 16) + thsensor.coef.temp_z; // x 0.01 C // 16500 -4000
 			_temp = (reg_data[2] << 8) | reg_data[3];
 			measured_data.humi = ((uint32_t)(_temp * thsensor.coef.humi_k) >> 16) + thsensor.coef.humi_z; // x 0.01 % // 10000 -0
 			if (measured_data.humi < 0) measured_data.humi = 0;
@@ -202,15 +202,40 @@ static int read_sensor_sht30(void) {
 			crc = sensor_crc(crc ^ data);
 			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
 			data = reg_i2c_di;
+#if 1	// use humi CRC
+			if (crc != data) {
+				reg_i2c_ctrl = FLD_I2C_CMD_STOP;
+				while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+				continue;
+			}
 			reg_i2c_ctrl = FLD_I2C_CMD_DI | FLD_I2C_CMD_READ_ID;
 			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
-			_humi = reg_i2c_di << 8;
+			data = reg_i2c_di;
+			reg_i2c_ctrl = FLD_I2C_CMD_DI | FLD_I2C_CMD_READ_ID;
+			_humi = data << 8;
+			crc = sensor_crc(data ^ 0xff);
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+			data = reg_i2c_di;
 			reg_i2c_ctrl = FLD_I2C_CMD_DI | FLD_I2C_CMD_READ_ID | FLD_I2C_CMD_ACK;
+			_humi |= data;
+			crc = sensor_crc(crc ^ data);
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+			data = reg_i2c_di;
+			reg_i2c_ctrl = FLD_I2C_CMD_STOP;
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+			if (crc == data) {
+#else
+			reg_i2c_ctrl = FLD_I2C_CMD_DI | FLD_I2C_CMD_READ_ID;
+			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
+			data = reg_i2c_di;
+			reg_i2c_ctrl = FLD_I2C_CMD_DI | FLD_I2C_CMD_READ_ID | FLD_I2C_CMD_ACK;
+				_humi = data << 8;
 			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
 			_humi |= reg_i2c_di;
 			reg_i2c_ctrl = FLD_I2C_CMD_STOP;
 			while (reg_i2c_status & FLD_I2C_CMD_BUSY);
 			if (crc == data && _temp != 0xffff) {
+#endif
 				measured_data.temp = ((int32_t)(_temp * thsensor.coef.temp_k) >> 16) + thsensor.coef.temp_z; // x 0.01 C //17500 - 4500
 				measured_data.humi = ((uint32_t)(_humi * thsensor.coef.humi_k) >> 16) + thsensor.coef.humi_z; // x 0.01 %	   // 10000 -0
 				if (measured_data.humi < 0) measured_data.humi = 0;
