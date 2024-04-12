@@ -10,7 +10,7 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 * Поддерживаемые форматы BLE рекламы: BTHome v1, BTHome v2, PVVX, MiHome.
 * Поддержка Bluetooth ver 5 c LE Long Range.
 * Объем памяти замеров 51943 шт. [GraphMemo.html](https://pvvx.github.io/ATC_MiThermometer/GraphMemo.html)
-* Среднее потребление зависит от настроек - менее 20 мкА. TH03Z с установленным интервалом рекламы на 5 сек, TX RF +0 Дбм потребляет до 8 мкА.
+* Среднее потребление зависит от настроек - менее 20 мкА. TH03Z с установленным интервалом рекламы на 5 сек, TX RF +0 дБм потребляет до 8 мкА.
 
 ## Функции кнопки
 
