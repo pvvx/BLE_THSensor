@@ -34,10 +34,12 @@ extern "C" {
 //#define BOARD_TH05D		24 // TH05_V1.3 https://github.com/pvvx/THB2
 //#define BOARD_TH05F		25 // TH05Y_V1.2 https://github.com/pvvx/THB2
 //#define BOARD_THB3		26 // https://github.com/pvvx/THB2
+#define DEVICE_ZTH01   		27	// ZigBee ZTH01
+#define DEVICE_ZTH02   		28	// ZigBee ZTH02
 
 
 #ifndef DEVICE_TYPE
-#define DEVICE_TYPE			DEVICE_TH03Z // Use TS0201 or DEVICE_TH03Z only
+#define DEVICE_TYPE			DEVICE_ZTH01 // Use TS0201 or DEVICE_TH03Z or DEVICE_ZTH01 or DEVICE_ZTH02 only
 #endif
 
 // supported services by the device (bits)
@@ -155,12 +157,12 @@ extern "C" {
 #define PULL_WAKEUP_SRC_PC2	PM_PIN_PULLUP_10K
 #define PULL_WAKEUP_SRC_PC3	PM_PIN_PULLUP_10K
 
-#define GPIO_KEY			GPIO_PC0
-#define PC0_INPUT_ENABLE	1
-#define PC0_DATA_OUT		0
-#define PC0_OUTPUT_ENABLE	0
-#define PC0_FUNC			AS_GPIO
-#define PULL_WAKEUP_SRC_PC0	PM_PIN_PULLUP_10K
+#define GPIO_KEY			GPIO_PB5
+#define PB5_INPUT_ENABLE	1
+#define PB5_DATA_OUT		0
+#define PB5_OUTPUT_ENABLE	0
+#define PB5_FUNC			AS_GPIO
+#define PULL_WAKEUP_SRC_PB5	PM_PIN_PULLUP_10K
 
 #define GPIO_LED			GPIO_PB4
 #define PB4_INPUT_ENABLE	1
@@ -168,6 +170,82 @@ extern "C" {
 #define PB4_OUTPUT_ENABLE	0
 #define PB4_FUNC			AS_GPIO
 #define PULL_WAKEUP_SRC_PB4	PM_PIN_PULLDOWN_100K
+
+#elif DEVICE_TYPE == DEVICE_ZTH01
+
+// GPIO_PB1 - TX
+// GPIO_PB4 - KEY
+// GPIO_PB5 - LED
+// GPIO_PB7 - RX
+// GPIO_PC2 - SDA
+// GPIO_PC3 - SCL
+
+#define SHL_ADC_VBAT	1  // "B0P" in adc.h
+#define GPIO_VBAT	GPIO_PB0 // missing pin on case TLSR8251F512ET24
+#define PB0_INPUT_ENABLE	1
+#define PB0_DATA_OUT		1
+#define PB0_OUTPUT_ENABLE	1
+#define PB0_FUNC			AS_GPIO
+
+#define I2C_SCL 	GPIO_PC3
+#define I2C_SDA 	GPIO_PC2
+#define I2C_GROUP 	I2C_GPIO_GROUP_C2C3
+#define PULL_WAKEUP_SRC_PC2	PM_PIN_PULLUP_10K
+#define PULL_WAKEUP_SRC_PC3	PM_PIN_PULLUP_10K
+
+#define USE_SENSOR_AHT20_30	1
+
+#define GPIO_KEY			GPIO_PB4
+#define PB4_INPUT_ENABLE	1
+#define PB4_DATA_OUT		0
+#define PB4_OUTPUT_ENABLE	0
+#define PB4_FUNC			AS_GPIO
+#define PULL_WAKEUP_SRC_PB4	PM_PIN_PULLUP_1M
+
+#define GPIO_LED			GPIO_PB5
+#define PB5_INPUT_ENABLE	1
+#define PB5_DATA_OUT		1
+#define PB5_OUTPUT_ENABLE	0
+#define PB5_FUNC			AS_GPIO
+#define PULL_WAKEUP_SRC_PB5	PM_PIN_PULLDOWN_100K
+
+#elif DEVICE_TYPE == DEVICE_ZTH02
+
+// GPIO_PB1 - TX
+// GPIO_PB4 - KEY
+// GPIO_PB5 - LED
+// GPIO_PB7 - RX
+// GPIO_PC2 - SDA
+// GPIO_PC3 - SCL
+
+#define SHL_ADC_VBAT	1  // "B0P" in adc.h
+#define GPIO_VBAT	GPIO_PB0 // missing pin on case TLSR8251F512ET24
+#define PB0_INPUT_ENABLE	1
+#define PB0_DATA_OUT		1
+#define PB0_OUTPUT_ENABLE	1
+#define PB0_FUNC			AS_GPIO
+
+#define I2C_SCL 	GPIO_PC3
+#define I2C_SDA 	GPIO_PC2
+#define I2C_GROUP 	I2C_GPIO_GROUP_C2C3
+#define PULL_WAKEUP_SRC_PC2	PM_PIN_PULLUP_10K
+#define PULL_WAKEUP_SRC_PC3	PM_PIN_PULLUP_10K
+
+#define USE_SENSOR_AHT20_30	1
+
+#define GPIO_KEY			GPIO_PB4
+#define PB4_INPUT_ENABLE	1
+#define PB4_DATA_OUT		0
+#define PB4_OUTPUT_ENABLE	0
+#define PB4_FUNC			AS_GPIO
+#define PULL_WAKEUP_SRC_PB4	PM_PIN_PULLUP_1M
+
+#define GPIO_LED			GPIO_PB5
+#define PB5_INPUT_ENABLE	1
+#define PB5_DATA_OUT		1
+#define PB5_OUTPUT_ENABLE	0
+#define PB5_FUNC			AS_GPIO
+#define PULL_WAKEUP_SRC_PB5	PM_PIN_PULLDOWN_100K
 
 #else // DEVICE_TYPE
 #error ("DEVICE_TYPE = ?")

@@ -31,6 +31,8 @@
 #define DEVICE_BTH01		20	// PHY62x2 BLE
 #define DEVICE_TH05			21	// PHY62x2 BLE LCD
 #define DEVICE_TH03Z   		22	// ZigBee TH03Z
+#define DEVICE_ZTH01   		27 // ZigBee ZTH01
+#define DEVICE_ZTH02   		28 // ZigBee ZTH02
 
 #define DEVICE_ORIG_TYUA_TS0201  0xA3D3 // original Tuya TS0201  _TZ3000_qsefbina _TZ3000_xr3htd96
 

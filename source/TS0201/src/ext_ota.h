@@ -10,16 +10,6 @@
 
 #include "app_config.h"
 
-#if (DEVICE_TYPE == DEVICE_MJWSD05MMC)
-void big_to_low_ota(void);
-#endif
-
-#if defined(MI_HW_VER_FADDR) && (MI_HW_VER_FADDR)
-uint32_t get_mi_hw_version(void);
-void set_SerialStr(void);
-#endif
-
-
 #if USE_EXT_OTA  // Compatible BigOTA
 
 #define ID_BOOTABLE 0x544c4e4b

@@ -12,6 +12,10 @@
 
 RAM  thsensor_cfg_t thsensor;
 
+#ifndef USE_SENSOR_AHT20_30
+#define USE_SENSOR_AHT20_30		0
+#endif
+
 //==================================== SHT30
 
 #define SHT30_POWER_TIMEOUT_us	1500	// time us
@@ -26,6 +30,15 @@ RAM  thsensor_cfg_t thsensor;
 #define SHT30_HIMEASURE_CS	0x062C // Measurement commands, Clock Stretching, Normal Mode, Read T First
 #define SHT30_LPMEASURE		0x1624 // Measurement commands, Clock Stretching Disabled, Low Power Mode, Read T First
 #define SHT30_LPMEASURE_CS	0x102C // Measurement commands, Clock Stretching, Low Power Mode, Read T First
+
+const thsensor_coef_t def_thcoef_sht30 = {
+		.temp_k = 17500,
+		.humi_k = 10000,
+		.temp_z = -4500,
+		.humi_z = 0
+};
+
+#define CRC_POLYNOMIAL  0x131 // P(x) = x^8 + x^5 + x^4 + 1 = 100110001
 
 //==================================== CHT8305
 
@@ -57,6 +70,10 @@ RAM  thsensor_cfg_t thsensor;
 #define CHT8305_CFG_VCC_ENABLE          0x0004
 #define CHT8305_CFG_VCC_RESERVED        0x0003
 
+#define CHT8305_MID	0x5959
+#define CHT8305_VID	0x0583
+
+
 struct __attribute__((packed)) _cht8305_config_t{
 	uint16_t reserved 	: 2;
 	uint16_t vccen		: 1;
@@ -73,21 +90,33 @@ struct __attribute__((packed)) _cht8305_config_t{
 	uint16_t srst		: 1;
 } cht8305_config_t;
 
-#define CRC_POLYNOMIAL  0x131 // P(x) = x^8 + x^5 + x^4 + 1 = 100110001
-
-const thsensor_coef_t def_thcoef_sht30 = {
-		.temp_k = 17500,
-		.humi_k = 10000,
-		.temp_z = -4500,
-		.humi_z = 0
-};
-
 const thsensor_coef_t def_thcoef_cht8305 = {
 		.temp_k = 16500,
 		.humi_k = 10000,
 		.temp_z = -4000,
 		.humi_z = 0
 };
+
+#if USE_SENSOR_AHT20_30
+
+//=================== AHT20_30
+#define AHT2x_I2C_ADDR	0x38
+
+#define AHT2x_CMD_INI	0x0E1  // Initialization Command
+#define AHT2x_CMD_TMS	0x0AC  // Trigger Measurement Command
+#define AHT2x_DATA1_TMS	0x33  // Trigger Measurement data
+#define AHT2x_DATA2_TMS	0x00  // Trigger Measurement data
+#define AHT2x_CMD_RST	0x0BA  // Soft Reset Command
+#define AHT2x_DATA_LPWR	0x0800 // go into low power mode
+
+const thsensor_coef_t def_thcoef_aht30 = {
+		.temp_k = 1250,
+		.humi_k = 625,
+		.temp_z = -5000,
+		.humi_z = 0
+};
+#endif
+
 
 static _attribute_ram_code_
 void send_sensor_word(uint16_t cmd) {
@@ -111,9 +140,53 @@ static uint8_t sensor_crc(uint8_t crc) {
 	return crc;
 }
 
+#if USE_SENSOR_AHT20_30
+
+_attribute_ram_code_
+static uint8_t sensor_crc_buf(uint8_t * msg, int len) {
+	int i;
+	uint8_t crc = 0xff;
+	for(i = 0; i < len; i++) {
+		crc = sensor_crc(crc ^ msg[i]);
+	}
+	return crc;
+}
+
+_attribute_ram_code_
+static int start_measure_aht2x(void) {
+	const uint8_t data[3] = {AHT2x_CMD_TMS, AHT2x_DATA1_TMS, AHT2x_DATA2_TMS};
+	return send_i2c_buf(thsensor.i2c_addr, (uint8_t *)data, sizeof(data));
+	//timer_measure_cb = clock_time() | 1;
+}
+
+_attribute_ram_code_ __attribute__((optimize("-Os")))
+static int read_sensor_aht2x(void) {
+	uint32_t _temp;
+	uint8_t data[7];
+	if (read_i2c_bytes(thsensor.i2c_addr, data, sizeof(data)) == 0
+	    && (data[0] & 0x80) == 0
+	    && sensor_crc_buf(data, sizeof(data)) == 0) {
+			_temp = (data[3] & 0x0F) << 16 | (data[4] << 8) | data[5];
+			measured_data.temp = ((uint32_t)(_temp * thsensor.coef.temp_k) >> 16) + thsensor.coef.temp_z; // x 0.01 C // 16500 -4000
+			_temp = (data[1] << 12) | (data[2] << 4) | (data[3] >> 4);
+			measured_data.humi = ((uint32_t)(_temp * thsensor.coef.humi_k) >> 16) + thsensor.coef.humi_z; // x 0.01 % // 10000 -0
+			if (measured_data.humi < 0) measured_data.humi = 0;
+			else if (measured_data.humi > 9999) measured_data.humi = 9999;
+			//measured_data.count++;
+			if(!start_measure_aht2x()) // start measure T/H
+				return 1;
+	}
+	send_i2c_byte(thsensor.i2c_addr, AHT2x_CMD_RST); // Soft reset command
+	thsensor.i2c_addr = 0;
+	return 0;
+}
+#endif
+
 static void check_sensor(void) {
 	uint8_t buf[4];
-	int test_i2c_addr = CHT8305_I2C_ADDR << 1;
+	int test_i2c_addr;
+	uint8_t *ptabinit = NULL;
+	test_i2c_addr = CHT8305_I2C_ADDR << 1;
 	do {
 		if ((thsensor.i2c_addr = (uint8_t) scan_i2c_addr(test_i2c_addr)) != 0) {
 			if(thsensor.i2c_addr >= (CHT8305_I2C_ADDR << 1) && thsensor.i2c_addr <= (CHT8305_I2C_ADDR_MAX << 1)) {
@@ -135,13 +208,15 @@ static void check_sensor(void) {
 				pm_wait_ms(SENSOR_RESET_TIMEOUT_ms);
 
 				send_i2c_byte(thsensor.i2c_addr, CHT8305_REG_TMP); // start measure T/H
-				memcpy(&thsensor.coef, &def_thcoef_cht8305, sizeof(thsensor.coef));
+				ptabinit = (uint8_t *)&def_thcoef_cht8305;
+				// memcpy(&thsensor.coef, &def_thcoef_cht8305, sizeof(thsensor.coef));
 				pm_wait_ms(SENSOR_MEASURING_TIMEOUT_ms);
 				read_sensor();
-			} else if (thsensor.i2c_addr == (SHT30_I2C_ADDR_A<<1) || thsensor.i2c_addr == (SHT30_I2C_ADDR_B<<1)) {
+			} else if (thsensor.i2c_addr == (SHT30_I2C_ADDR_A << 1) || thsensor.i2c_addr == (SHT30_I2C_ADDR_B << 1)) {
 				thsensor.id = (0x30<<16) | thsensor.i2c_addr;
 				send_sensor_word(SHT30_SOFT_RESET); // Soft reset command
-				memcpy(&thsensor.coef, &def_thcoef_sht30, sizeof(thsensor.coef));
+				ptabinit = (uint8_t *)&def_thcoef_sht30;
+				//memcpy(&thsensor.coef, &def_thcoef_sht30, sizeof(thsensor.coef));
 				sleep_us(SHT30_SOFT_RESET_us);
 				send_sensor_word(SHT30_HIMEASURE); // start measure T/H
 			} else
@@ -150,6 +225,22 @@ static void check_sensor(void) {
 		}
 		test_i2c_addr += 2;
 	} while(test_i2c_addr <= (SHT30_I2C_ADDR_B << 1));
+#if USE_SENSOR_AHT20_30
+	if(thsensor.i2c_addr == 0) {
+		if ((thsensor.i2c_addr = (uint8_t) scan_i2c_addr(AHT2x_I2C_ADDR << 1)) != 0) {
+			pm_wait_ms(5);
+			send_i2c_byte(thsensor.i2c_addr, AHT2x_CMD_RST); // Soft reset command
+			pm_wait_ms(20);
+			if(!start_measure_aht2x()) {
+				thsensor.id = (0x20<<16) | thsensor.i2c_addr;
+				ptabinit = (uint8_t *)&def_thcoef_aht30;
+			}
+		}
+	}
+#endif
+	if(thsensor.coef.temp_k == 0 && ptabinit) {
+		memcpy(&thsensor.coef, ptabinit, sizeof(thsensor.coef));
+	}
 }
 
 _attribute_ram_code_ __attribute__((optimize("-Os")))
@@ -255,6 +346,10 @@ int read_sensor(void) {
 		check_sensor();
 	else if (thsensor.i2c_addr >= (SHT30_I2C_ADDR_A<<1))
 		return read_sensor_sht30();
+#if USE_SENSOR_AHT20_30
+	else if (thsensor.i2c_addr >= (AHT2x_I2C_ADDR<<1))
+		return read_sensor_aht2x();
+#endif
 	else
 		return read_sensor_cht8305();
 	return 0;

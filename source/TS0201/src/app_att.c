@@ -106,6 +106,22 @@ static const u8 my_HardStr[4] = {"V1.0"};// = {"V1.0"};
 #endif
 static const u8 my_SoftStr[] = {'V','0'+(VERSION>>4),'.','0'+(VERSION&0x0f)}; // "0109"
 static const u8 my_ManStr[] = {"DIY.home"};
+#elif DEVICE_TYPE == DEVICE_ZTH01
+static const u8 my_ModelStr[] = {"ZTH01"};
+static const u8 my_HardStr[4] = {"V1.0"};// = {"V1.0"};
+#if !USE_FLASH_SERIAL_UID
+/static const u8 my_SerialStr[] = {"0000-0000-0000-0003"}; // "0000-0000-0000-00000"
+#endif
+static const u8 my_SoftStr[] = {'V','0'+(VERSION>>4),'.','0'+(VERSION&0x0f)}; // "0109"
+static const u8 my_ManStr[] = {"DIY.home"};
+#elif DEVICE_TYPE == DEVICE_ZTH02
+static const u8 my_ModelStr[] = {"ZTH02"};
+static const u8 my_HardStr[4] = {"V1.0"};// = {"V1.0"};
+#if !USE_FLASH_SERIAL_UID
+/static const u8 my_SerialStr[] = {"0000-0000-0000-0004"}; // "0000-0000-0000-00000"
+#endif
+static const u8 my_SoftStr[] = {'V','0'+(VERSION>>4),'.','0'+(VERSION&0x0f)}; // "0109"
+static const u8 my_ManStr[] = {"DIY.home"};
 #else
 #error "DEVICE_TYPE = ?"
 #endif
