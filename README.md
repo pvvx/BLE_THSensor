@@ -7,7 +7,7 @@ BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0
 
 [ZTH01](https://pvvx.github.io/TS0601_TZE200_zth01/), [ZTH02](https://pvvx.github.io/TS0601_TZE200_zth02/) работают с доработкой - [требуется выпаять лишнюю микросхему и впаять перемычки](https://github.com/pvvx/BLE_THSensor/issues/13#issuecomment-2148975619).
 
-<img src="https://pvvx.github.io/TS0601_TZE200_zth01/img/ZTH01.jpg" width="120"/> <img src="https://pvvx.github.io/TS0601_TZE200_zth02/img/zth02.jpg" width="120"/> 
+<img src="https://pvvx.github.io/TS0601_TZE200_zth01/img/ZTH01.jpg"/> <img src="https://pvvx.github.io/TS0601_TZE200_zth02/img/zth02.jpg" width="100"/> 
 
 ## Основные характеристики
 
