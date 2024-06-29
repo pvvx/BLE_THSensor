@@ -1,6 +1,9 @@
 # BLE_THSensor
 BLE temperature and humidity sensor based on [TS0201](https://pvvx.github.io/TS0201_TZ3000/), [TH03Z](https://pvvx.github.io/TH03Z/)
 
+#ВНИМАНИЕ: Начиная с версии 4.8 поддержка и код описанных моделей переехала в [https://github.com/pvvx/ATC_MiThermometer](https://github.com/pvvx/ATC_MiThermometer).
+
+
 <img src="https://pvvx.github.io/TS0201_TZ3000/img/ts0201_.jpg" width="120"/> <img src="https://pvvx.github.io/TH03Z/img/TH03Z.jpg" width="200"/>
 
 * Варианты Zigbee firmware находится в [ZigbeeTLc](https://github.com/pvvx/ZigbeeTLc)
